@@ -1,0 +1,14 @@
+{
+  "name": "todolist",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "daisyui": "^5.1.23",
+    "tailwindcss": "^4.1.13"
+  }
+}
