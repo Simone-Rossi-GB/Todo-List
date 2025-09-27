@@ -66,39 +66,24 @@
     </div>
     </div>
 
-    <!-- AREA TODO (DIV BIANCO SEPARATO) -->
-    <div class="todo-container p-6 elemento-centrato" >
-        <h2 class="text-2xl font-bold mb-6">I tuoi Todo 📝</h2>
-
-        <!-- Esempio todo items -->
-        <div class="space-y-4">
-            <div class="flex items-center space-x-3 p-4 bg-base-50 rounded-lg border border-base-300">
-                <input type="checkbox" class="checkbox" />
-                <span class="flex-1">Completare il design della TodoList</span>
-                <button class="btn btn-sm btn-ghost">✕</button>
-            </div>
-
-            <div class="flex items-center space-x-3 p-4 bg-base-50 rounded-lg border border-base-300">
-                <input type="checkbox" class="checkbox" />
-                <span class="flex-1">Implementare le funzionalità</span>
-                <button class="btn btn-sm btn-ghost">✕</button>
-            </div>
-
-            <div class="flex items-center space-x-3 p-4 bg-base-50 rounded-lg border border-base-300">
-                <input type="checkbox" class="checkbox" />
-                <span class="flex-1">Testare l'applicazione</span>
-                <button class="btn btn-sm btn-ghost">✕</button>
-            </div>
+    <div class="todo-container p-3 elemento-centrato" style="min-height: auto">
+    <div class="flex space-x-2 items-center">
+        <input type="text" placeholder="Aggiungi nuovo todo..." class="input input-bordered flex-1" />
+        
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="btn btn-outline">Stato ▼</div>
+            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                <li><a>Backlog</a></li>
+                <li><a>In Progress</a></li>
+                <li><a>Review</a></li>
+                <li><a>Done</a></li>
+            </ul>
         </div>
-
-        <!-- Add new todo -->
-        <div class="mt-8 elemento-centrato">
-            <div class="flex space-x-2">
-                <input type="text" placeholder="Aggiungi nuovo todo..." class="input input-bordered flex-1" />
-                <button class="btn btn-primary">Aggiungi</button>
-            </div>
-        </div>
+        
+        <button class="btn btn-primary">Aggiungi</button>
     </div>
+</div>
+
 
 </body>
 </html>
