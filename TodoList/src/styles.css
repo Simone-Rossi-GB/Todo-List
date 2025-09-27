@@ -1,1 +1,37 @@
+/* Context7 - Navbar normale fissa in alto */
+.navbar-simple-top {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 1000;
+    border-radius: 0.75rem;
+}
+
+/* Contenuto todo area */
+.todo-container {
+    margin-top: 6rem;
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 16px;
+    border-radius: 1rem;
+    background: white;
+    min-height: calc(100vh - 8rem);
+}
+
+.elemento-centrato {
+    width: 98%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Nasconde scrollbar */
+body {
+    overflow-y: hidden;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
 
