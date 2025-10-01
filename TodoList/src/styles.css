@@ -25,24 +25,44 @@
     margin-right: auto;
 }
 
+.todo-div {
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px;
+
+}
+
+.div-title{
+    font-size: large;
+    align-self: center;
+}
+
 .todo-list{
-
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    margin: 20px;
 }
 
-.backlog{
-
+#backlog{
+    background-color: #b3d4fc;
 }
 
-.in_progress{
-
+#in_progress{
+    background-color: #ffdab9;
 }
 
-.review{
-
+#review{
+    background-color: #c5c7cd;
 }
 
-.done{
-    
+#done{
+    background-color: #b3fcd4;
 }
 
 
