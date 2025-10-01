@@ -30,49 +30,53 @@
     height: auto;
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
-    padding: 20px;
+    align-items: flex-start;
 
 }
 
-.div-title{
-    font-size: large;
+.div-title {
+    font-size: 30px;
     align-self: center;
+    font-weight: bold;
+    margin-bottom: 5%;
 }
 
-.todo-list{
+.todo-list {
     width: auto;
     height: auto;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    border-radius: 20px;
+    padding: 20px;
     margin: 20px;
 }
 
-#backlog{
+#backlog {
     background-color: #b3d4fc;
 }
 
-#in_progress{
+#in_progress {
     background-color: #ffdab9;
 }
 
-#review{
+#review {
     background-color: #c5c7cd;
 }
 
-#done{
+#done {
     background-color: #b3fcd4;
 }
 
 
 /* Nasconde scrollbar */
+html,
 body {
-    overflow-y: hidden;
+    overflow: auto;
 }
 
 body {
     display: flex;
     flex-direction: column;
 }
-
