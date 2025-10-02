@@ -41,38 +41,73 @@
 }
 
 .div-title{
-    font-size: 1.125rem;
-    font-weight: 600;
-    align-self: center;
-    margin-bottom: 0.5rem;
-    letter-spacing: 0.025em;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 12px 12px 0 0;
+    background: inherit;
 }
 
 .todo-list{
     width: 100%;
-    max-width: 250px;
-    height: auto;
+    max-width: 280px;
+    height: calc(100vh - 220px);
     display: flex;
     flex-direction: column;
-    padding: 10px;
     margin: 0;
     flex-shrink: 1;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.todo-list-content {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    border-radius: 0 0 12px 12px;
+    min-height: 0;
+}
+
+.todo-list-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.todo-list-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.todo-list-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.todo-list-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 #backlog{
-    background-color: #b3d4fc;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 #in_progress{
-    background-color: #ffdab9;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
 }
 
 #review{
-    background-color: #c5c7cd;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
 }
 
 #done{
-    background-color: #b3fcd4;
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
 }
 
 
@@ -99,6 +134,13 @@ body {
 .card {
     transition: transform 0.2s ease;
     cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.card-body {
+    padding: 1rem;
 }
 
 .card:hover {
