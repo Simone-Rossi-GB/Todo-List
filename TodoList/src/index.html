@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="it" data-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,20 +9,24 @@
     <!-- Tailwind CSS + DaisyUI via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <link href = "styles.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
 </head>
+
 <body class="bg-base-200">
 
-    <!-- Menù a tendina -->
-    <div class="navbar bg-base-100 shadow-lg navbar-simple-top elemento-centrato">
+<!-- Menù a tendina -->
+<div class="navbar bg-base-100 shadow-lg navbar-simple-top elemento-centrato">
     <div class="flex-none">
         <div class="dropdown">
             <div tabindex="0" role="button" class="btn btn-square btn-ghost">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block h-5 w-5 stroke-current">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                     class="inline-block h-5 w-5 stroke-current">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+            <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
                 <li><a>Home</a></li>
                 <li><a>Backlog</a></li>
                 <li><a>In Progress</a></li>
@@ -30,11 +35,11 @@
             </ul>
         </div>
     </div>
-    
+
     <div class="flex-1">
         <span class="text-xl font-semibold">TodoList</span>
     </div>
-    
+
     <label class="input bg-base-200" style="width: 25em;">
         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 24">
             <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
@@ -42,17 +47,19 @@
                 <path d="m21 21-4.3-4.3"></path>
             </g>
         </svg>
-        <input type="search" required placeholder="Search"/>
+        <input type="search" required placeholder="Search" />
     </label>
-    
+
     <div class="flex-none ml-4">
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                 <div class="w-10 rounded-full">
-                    <img alt="Avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                    <img alt="Avatar"
+                         src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
                 </div>
             </div>
-            <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1000] mt-3 w-52 p-2 shadow">
+            <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1000] mt-3 w-52 p-2 shadow">
                 <li>
                     <a class="justify-between">
                         Profile
@@ -64,12 +71,12 @@
             </ul>
         </div>
     </div>
-    </div>
+</div>
 
-    <div class="todo-container p-3 elemento-centrato" style="min-height: auto">
+<div class="todo-container p-3 elemento-centrato" style="min-height: auto">
     <div class="flex space-x-2 items-center">
         <input type="text" placeholder="Aggiungi nuovo todo..." class="input input-bordered flex-1" />
-        
+
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-outline">Stato ▼</div>
             <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
@@ -82,7 +89,7 @@
 
         <div class="dropdown dropdown-end">
             <button tabindex="0" role="button" class="btn btn-primary">Aggiungi</button>
-            <ul tabindex="0"  class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                 <li><a></a></li>
             </ul>
         </div>
@@ -90,30 +97,82 @@
     </div>
 </div>
 
-    <div class = "todo-div elemento-centrato">
-        <div id = "backlog" class = "todo-list">
-            <div class="div-title">Backlog</div>
-            <div style="height: 10cm;"></div>
+<div class="todo-div elemento-centrato">
+    <div id="backlog" class="todo-list">
+        <div class="div-title">Backlog</div>
+        <div class="card w-full bg-base-100 card-lg shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-base">Large Card</h2>
+                <p class="text-sm">A card component has a figure, a body part, and inside body there are title and actions parts</p>
+                <div class="card-actions flex-row justify-center gap-2">
+                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
+                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+                </div>
+            </div>
         </div>
 
-        <div id = "in_progress" class = "todo-list">
-            <div class="div-title">In Progress</div>
-            <div style="height: 10cm;"></div>
-        </div>
-
-        <div id = "review" class = "todo-list">
-            <div class="div-title">Review</div>
-            <div style="height: 10cm;"></div>
-        </div>
-
-        <div id = "done" class = "todo-list">
-            <div class="div-title">Done</div>
-            <div style="height: 10cm;"></div>
-        </div>
     </div>
+
+    <div id="in_progress" class="todo-list">
+        <div class="div-title">In Progress</div>
+        <div class="card w-full bg-base-100 card-lg shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-base">Large Card</h2>
+                <p class="text-sm">A card component has a figure, a body part, and inside body there are title and actions parts</p>
+                <div class="card-actions flex-row justify-center gap-2">
+                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
+                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card w-full bg-base-100 card-lg shadow-sm" style = "margin-top: 5%;">
+            <div class="card-body">
+                <h2 class="card-title text-base">Large Card</h2>
+                <p class="text-sm">A card component has a figure, a body part, and inside body there are title and actions parts</p>
+                <div class="card-actions flex-row justify-center gap-2">
+                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
+                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="review" class="todo-list">
+        <div class="div-title">Review</div>
+        <div class="card w-full bg-base-100 card-lg shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-base">Large Card</h2>
+                <p class="text-sm">A card component has a figure, a body part, and inside body there are title and actions parts</p>
+                <div class="card-actions flex-row justify-center gap-2">
+                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
+                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="done" class="todo-list">
+        <div class="div-title">Done</div>
+        <div class="card w-full bg-base-100 card-lg shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-base">Large Card</h2>
+                <p class="text-sm">A card component has a figure, a body part, and inside body there are title and actions parts</p>
+                <div class="card-actions flex-row justify-center gap-2">
+                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
+                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 
 
 
 </body>
+
 </html>
