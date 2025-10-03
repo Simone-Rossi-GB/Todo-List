@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>TodoList</title>
-        <script src="main.js"></script>
+        <script src="main.js" defer type="module"></script>
         <!-- Tailwind CSS + DaisyUI via CDN -->
         <script src="https://cdn.tailwindcss.com"></script>
         <link
@@ -90,23 +90,23 @@
             style="min-height: auto">
             <div class="flex space-x-2 items-center">
                 <input type="text" placeholder="Aggiungi nuovo todo..."
-                    class="input input-bordered flex-1" />
+                    class="input input-bordered flex-1" id="input-nota"/>
 
-                <div class="dropdown dropdown-end">
+                <div class="dropdown dropdown-end" id="filtro-stato">
                     <div tabindex="0" role="button"
-                        class="btn btn-outline">Stato ▼</div>
+                        class="btn btn-outline" id="label-stato">Stato ▼</div>
                     <ul tabindex="0"
                         class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                        <li><a>Backlog</a></li>
-                        <li><a>In Progress</a></li>
-                        <li><a>Review</a></li>
-                        <li><a>Done</a></li>
+                        <button class="btn btn-sm btn-ghost" id="button-backlog">Backlog</button>
+                        <button class="btn btn-sm btn-ghost" id="button-inProgress">In Progress</button>
+                        <button class="btn btn-sm btn-ghost" id="button-review">Review</button>
+                        <button class="btn btn-sm btn-ghost" id="button-done">Done</button>
                     </ul>
                 </div>
 
                 <div class="dropdown dropdown-end">
                     <button tabindex="0" role="button"
-                        class="btn btn-primary">Aggiungi</button>
+                        class="btn btn-primary" id="bottone-aggiungi">Aggiungi</button>
                     <ul tabindex="0"
                         class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
                         <li><a></a></li>

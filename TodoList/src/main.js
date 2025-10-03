@@ -1,3 +1,5 @@
+import { aggiungiNota_run } from './code/aggiungi_nota.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     // Mappa per tracciare lo stato hover di ogni colonna
     const columnHoverStates = new Map();
@@ -11,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target.classList.contains('btn')) {
                 return;
             }
-
+            
             // Trova la colonna parent
             const column = card.closest('.todo-list');
             const columnId = column ? column.id : '';
@@ -119,4 +121,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Avvia auto-scroll iniziale
         startAutoScroll();
     });
+
+    //test
+    aggiungiNota_run();
 });
