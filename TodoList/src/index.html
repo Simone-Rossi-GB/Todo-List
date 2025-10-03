@@ -1,329 +1,423 @@
 <!DOCTYPE html>
 <html lang="it" data-theme="light">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TodoList</title>
-    <script src="main.js"></script>
-    <!-- Tailwind CSS + DaisyUI via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <link href="styles.css" rel="stylesheet">
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>TodoList</title>
+        <script src="main.js"></script>
+        <!-- Tailwind CSS + DaisyUI via CDN -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+            rel="stylesheet" type="text/css" />
+        <link href="styles.css" rel="stylesheet">
+    </head>
 
-<body class="bg-base-200">
+    <body class="bg-base-200">
 
-<!-- Menù a tendina -->
-<div class="navbar bg-base-100 shadow-lg navbar-simple-top elemento-centrato">
-    <div class="flex-none">
-        <div class="dropdown">
-            <div tabindex="0" role="button" class="btn btn-square btn-ghost">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                     class="inline-block h-5 w-5 stroke-current">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M4 6h16M4 12h16M4 18h16"></path>
+        <!-- Menù a tendina -->
+        <div
+            class="navbar bg-base-100 shadow-lg navbar-simple-top elemento-centrato">
+            <div class="flex-none">
+                <div class="dropdown">
+                    <div tabindex="0" role="button"
+                        class="btn btn-square btn-ghost">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24"
+                            class="inline-block h-5 w-5 stroke-current">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </div>
+                    <ul tabindex="0"
+                        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                        <li><a>Home</a></li>
+                        <li><a>Backlog</a></li>
+                        <li><a>In Progress</a></li>
+                        <li><a>Review</a></li>
+                        <li><a>Done</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Titolo applicazione -->
+            <div class="flex-1">
+                <span class="text-xl font-semibold">TodoList</span>
+            </div>
+
+            <!-- Barra di ricerca -->
+            <label class="input bg-base-200" style="width: 25em;">
+                <svg class="h-[1em] opacity-50"
+                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 24">
+                    <g stroke-linejoin="round" stroke-linecap="round"
+                        stroke-width="2.5" fill="none" stroke="currentColor">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.3-4.3"></path>
+                    </g>
                 </svg>
-            </div>
-            <ul tabindex="0"
-                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                <li><a>Home</a></li>
-                <li><a>Backlog</a></li>
-                <li><a>In Progress</a></li>
-                <li><a>Review</a></li>
-                <li><a>Done</a></li>
-            </ul>
-        </div>
-    </div>
+                <input type="search" required placeholder="Search" />
+            </label>
 
-    <div class="flex-1">
-        <span class="text-xl font-semibold">TodoList</span>
-    </div>
-
-    <label class="input bg-base-200" style="width: 25em;">
-        <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 24">
-            <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none" stroke="currentColor">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.3-4.3"></path>
-            </g>
-        </svg>
-        <input type="search" required placeholder="Search" />
-    </label>
-
-    <div class="flex-none ml-4">
-        <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-10 rounded-full">
-                    <img alt="Avatar"
-                         src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
-                </div>
-            </div>
-            <ul tabindex="0"
-                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1000] mt-3 w-52 p-2 shadow">
-                <li>
-                    <a class="justify-between">
-                        Profile
-                        <span class="badge">New</span>
-                    </a>
-                </li>
-                <li><a>Settings</a></li>
-                <li><a>Logout</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="todo-container p-3 elemento-centrato" style="min-height: auto">
-    <div class="flex space-x-2 items-center">
-        <input type="text" placeholder="Aggiungi nuovo todo..." class="input input-bordered flex-1" />
-
-        <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-outline">Stato ▼</div>
-            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                <li><a>Backlog</a></li>
-                <li><a>In Progress</a></li>
-                <li><a>Review</a></li>
-                <li><a>Done</a></li>
-            </ul>
-        </div>
-
-        <div class="dropdown dropdown-end">
-            <button tabindex="0" role="button" class="btn btn-primary">Aggiungi</button>
-            <ul tabindex="0" class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                <li><a></a></li>
-            </ul>
-        </div>
-
-    </div>
-</div>
-
-<div class="todo-div elemento-centrato">
-    <div id="backlog" class="todo-list">
-        <div class="div-title">Backlog</div>
-        <div class="todo-list-content">
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Implementare Login</h2>
-                <p class="text-sm">Creare sistema di autenticazione con email e password</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+            <!-- Navbar profilo utente -->
+            <div class="flex-none ml-4">
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button"
+                        class="btn btn-ghost btn-circle avatar">
+                        <div class="w-10 rounded-full">
+                            <img alt="Avatar"
+                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                        </div>
+                    </div>
+                    <ul tabindex="0"
+                        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1000] mt-3 w-52 p-2 shadow">
+                        <li>
+                            <a class="justify-between">
+                                Profile
+                                <span class="badge">New</span>
+                            </a>
+                        </li>
+                        <li><a>Settings</a></li>
+                        <li><a>Logout</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Design Database</h2>
-                <p class="text-sm">Progettare schema database per gestione utenti e task</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
+        <!-- Input per nuovo todo -->
+        <div class="todo-container p-3 elemento-centrato"
+            style="min-height: auto">
+            <div class="flex space-x-2 items-center">
+                <input type="text" placeholder="Aggiungi nuovo todo..."
+                    class="input input-bordered flex-1" />
+
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" role="button"
+                        class="btn btn-outline">Stato ▼</div>
+                    <ul tabindex="0"
+                        class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                        <li><a>Backlog</a></li>
+                        <li><a>In Progress</a></li>
+                        <li><a>Review</a></li>
+                        <li><a>Done</a></li>
+                    </ul>
+                </div>
+
+                <div class="dropdown dropdown-end">
+                    <button tabindex="0" role="button"
+                        class="btn btn-primary">Aggiungi</button>
+                    <ul tabindex="0"
+                        class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                        <li><a></a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Note Todo List -->
+
+        <div class="todo-div elemento-centrato">
+            <div id="backlog" class="todo-list">
+                <div class="div-title">Backlog</div>
+                <div class="todo-list-content">
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Implementare
+                                Login</h2>
+                            <p class="text-sm">Creare sistema di autenticazione
+                                con email e password</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Design
+                                Database</h2>
+                            <p class="text-sm">Progettare schema database per
+                                gestione utenti e task</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">API REST</h2>
+                            <p class="text-sm">Sviluppare endpoints API per CRUD
+                                operations</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Notifiche Push</h2>
+                            <p class="text-sm">Implementare sistema di notifiche
+                                per scadenze task</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Upload File</h2>
+                            <p class="text-sm">Aggiungere funzionalità di upload
+                                allegati ai task</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="in_progress" class="todo-list">
+                <div class="div-title">In Progress</div>
+                <div class="todo-list-content">
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">UI Dashboard</h2>
+                            <p class="text-sm">Sviluppo interfaccia dashboard
+                                principale con grafici</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Testing Unit</h2>
+                            <p class="text-sm">Scrivere test unitari per
+                                componenti React</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Ottimizzazione</h2>
+                            <p class="text-sm">Migliorare performance e ridurre
+                                tempo di caricamento</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Refactoring</h2>
+                            <p class="text-sm">Pulizia codice e miglioramento
+                                struttura componenti</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="review" class="todo-list">
+                <div class="div-title">Review</div>
+                <div class="todo-list-content">
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Code Review
+                                API</h2>
+                            <p class="text-sm">Revisione codice endpoints
+                                autenticazione e validazione</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Documentazione</h2>
+                            <p class="text-sm">Verifica completezza
+                                documentazione API e componenti</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Security Check</h2>
+                            <p class="text-sm">Controllo vulnerabilità e best
+                                practices sicurezza</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="done" class="todo-list">
+                <div class="div-title">Done</div>
+                <div class="todo-list-content">
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Setup Progetto</h2>
+                            <p class="text-sm">Configurazione iniziale progetto
+                                con Tauri e DaisyUI</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Navbar Design</h2>
+                            <p class="text-sm">Completato design e
+                                implementazione navbar responsive</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Card Component</h2>
+                            <p class="text-sm">Creazione componente card
+                                riutilizzabile con animazioni</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Responsive
+                                Layout</h2>
+                            <p class="text-sm">Adattamento layout per
+                                dispositivi mobile e tablet</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Color Scheme</h2>
+                            <p class="text-sm">Definizione palette colori e temi
+                                applicazione</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card w-full bg-base-100 card-lg shadow-sm">
+                        <div class="card-body">
+                            <h2 class="card-title text-base">Git Repository</h2>
+                            <p class="text-sm">Creazione repository e
+                                configurazione workflow CI/CD</p>
+                            <div
+                                class="card-actions flex-row justify-center gap-2">
+                                <button
+                                    class="btn btn-info btn-outline btn-sm">Sposta</button>
+                                <button
+                                    class="btn btn-error btn-outline btn-sm">Elimina</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
 
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">API REST</h2>
-                <p class="text-sm">Sviluppare endpoints API per CRUD operations</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Notifiche Push</h2>
-                <p class="text-sm">Implementare sistema di notifiche per scadenze task</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Upload File</h2>
-                <p class="text-sm">Aggiungere funzionalità di upload allegati ai task</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
-
-    <div id="in_progress" class="todo-list">
-        <div class="div-title">In Progress</div>
-        <div class="todo-list-content">
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">UI Dashboard</h2>
-                <p class="text-sm">Sviluppo interfaccia dashboard principale con grafici</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Testing Unit</h2>
-                <p class="text-sm">Scrivere test unitari per componenti React</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Ottimizzazione</h2>
-                <p class="text-sm">Migliorare performance e ridurre tempo di caricamento</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Refactoring</h2>
-                <p class="text-sm">Pulizia codice e miglioramento struttura componenti</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
-
-    <div id="review" class="todo-list">
-        <div class="div-title">Review</div>
-        <div class="todo-list-content">
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Code Review API</h2>
-                <p class="text-sm">Revisione codice endpoints autenticazione e validazione</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Documentazione</h2>
-                <p class="text-sm">Verifica completezza documentazione API e componenti</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Security Check</h2>
-                <p class="text-sm">Controllo vulnerabilità e best practices sicurezza</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
-
-    <div id="done" class="todo-list">
-        <div class="div-title">Done</div>
-        <div class="todo-list-content">
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Setup Progetto</h2>
-                <p class="text-sm">Configurazione iniziale progetto con Tauri e DaisyUI</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Navbar Design</h2>
-                <p class="text-sm">Completato design e implementazione navbar responsive</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Card Component</h2>
-                <p class="text-sm">Creazione componente card riutilizzabile con animazioni</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Responsive Layout</h2>
-                <p class="text-sm">Adattamento layout per dispositivi mobile e tablet</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Color Scheme</h2>
-                <p class="text-sm">Definizione palette colori e temi applicazione</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="card w-full bg-base-100 card-lg shadow-sm">
-            <div class="card-body">
-                <h2 class="card-title text-base">Git Repository</h2>
-                <p class="text-sm">Creazione repository e configurazione workflow CI/CD</p>
-                <div class="card-actions flex-row justify-center gap-2">
-                    <button class="btn btn-info btn-outline btn-sm">Sposta</button>
-                    <button class="btn btn-error btn-outline btn-sm">Elimina</button>
-                </div>
-            </div>
-        </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-
-</body>
+    </body>
 
 </html>
