@@ -44,7 +44,7 @@ async function loadRoute(routeName) {
     console.log('Loading route:', routeName);
 
     try {
-        // Carica l'HTML della route - usa il nome della cartella per i file
+        // Carica l'HTML della route
         const htmlPath = `./${routeName}/${routeName}.html`;
         console.log('Fetching HTML from:', htmlPath);
 
@@ -79,7 +79,6 @@ async function loadRoute(routeName) {
         const scriptResponse = await fetch(jsPath);
         if (scriptResponse.ok) {
             const scriptText = await scriptResponse.text();
-            // Rimuovi import statements per evitare errori
             const scriptWithoutImports = scriptText.replace(/import .* from .*;/g, '');
             const script = document.createElement('script');
             script.type = 'module';
@@ -94,6 +93,142 @@ async function loadRoute(routeName) {
     }
 }
 
+// Funzione per inizializzare la home page
+function initHomePage() {
+    // Mappa per tracciare lo stato hover di ogni colonna
+    const columnHoverStates = new Map();
+
+    // Aggiungi event listener a tutte le card
+    const cards = document.querySelectorAll('.card');
+
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            // Non navigare se si clicca su un pulsante
+            if (e.target.classList.contains('btn')) {
+                return;
+            }
+
+            // Trova la colonna parent
+            const column = card.closest('.todo-list');
+            const columnId = column ? column.id : '';
+
+            // Naviga alla pagina della colonna
+            console.log(`Navigazione alla colonna: ${columnId}`);
+        });
+
+        // Gestisci hover sulla card
+        card.addEventListener('mouseenter', function() {
+            const listContent = card.closest('.todo-list-content');
+            if (listContent) {
+                columnHoverStates.set(listContent, true);
+            }
+        });
+
+        card.addEventListener('mouseleave', function() {
+            const listContent = card.closest('.todo-list-content');
+            if (listContent) {
+                columnHoverStates.set(listContent, false);
+            }
+        });
+    });
+
+    // Auto-scroll carosello per ogni colonna
+    const todoLists = document.querySelectorAll('.todo-list-content');
+
+    todoLists.forEach(list => {
+        let scrollDirection = 1;
+        let autoScrollInterval = null;
+        let userScrollTimeout = null;
+        let isUserScrolling = false;
+
+        const cardCount = list.querySelectorAll('.card').length;
+
+        // Disabilita scroll se ci sono 3 o meno note
+        if (cardCount <= 3) {
+            list.style.overflowY = 'hidden';
+            return;
+        }
+
+        function startAutoScroll() {
+            if (autoScrollInterval) return;
+
+            autoScrollInterval = setInterval(() => {
+                if (isUserScrolling) return;
+                if (columnHoverStates.get(list)) return;
+
+                const maxScroll = list.scrollHeight - list.clientHeight;
+
+                if (scrollDirection === 1) {
+                    list.scrollTop += 1;
+                    if (list.scrollTop >= maxScroll - 5) {
+                        scrollDirection = -1;
+                    }
+                } else {
+                    list.scrollTop -= 1;
+                    if (list.scrollTop <= 5) {
+                        scrollDirection = 1;
+                    }
+                }
+            }, 50);
+        }
+
+        list.addEventListener('wheel', () => {
+            isUserScrolling = true;
+            clearInterval(autoScrollInterval);
+            autoScrollInterval = null;
+
+            clearTimeout(userScrollTimeout);
+            userScrollTimeout = setTimeout(() => {
+                isUserScrolling = false;
+                startAutoScroll();
+            }, 3000);
+        });
+
+        list.addEventListener('scroll', (e) => {
+            if (!autoScrollInterval) {
+                isUserScrolling = true;
+
+                clearTimeout(userScrollTimeout);
+                userScrollTimeout = setTimeout(() => {
+                    isUserScrolling = false;
+                    startAutoScroll();
+                }, 3000);
+            }
+        });
+
+        startAutoScroll();
+    });
+
+    // Riattiva la funzione di aggiunta note
+    aggiungiNota_run();
+
+    // Gestione chiusura dropdown al secondo click
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('[tabindex="0"]');
+        if (!button) return;
+
+        let isOpen = false;
+
+        button.addEventListener('click', function(e) {
+            if (isOpen) {
+                this.blur();
+                isOpen = false;
+            } else {
+                isOpen = true;
+            }
+        });
+
+        button.addEventListener('blur', function() {
+            setTimeout(() => {
+                isOpen = false;
+            }, 200);
+        });
+    });
+}
+
+// Inizializzazione al caricamento della pagina
 document.addEventListener('DOMContentLoaded', function() {
     // Salva il contenuto originale della home
     originalHomeContent = document.getElementById('app-content').innerHTML;
@@ -107,8 +242,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const appContent = document.getElementById('app-content');
         appContent.innerHTML = originalHomeContent;
 
-        // Riattiva la logica della home
-        aggiungiNota_run();
+        // Reinizializza la home page
+        initHomePage();
         console.log('Home route loaded');
     });
 
@@ -146,153 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Avvia il router
     router.start();
-    // Mappa per tracciare lo stato hover di ogni colonna
-    const columnHoverStates = new Map();
 
-    // Aggiungi event listener a tutte le card
-    const cards = document.querySelectorAll('.card');
-
-    cards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            // Non navigare se si clicca su un pulsante
-            if (e.target.classList.contains('btn')) {
-                return;
-            }
-            
-            // Trova la colonna parent
-            const column = card.closest('.todo-list');
-            const columnId = column ? column.id : '';
-
-            // Naviga alla pagina della colonna (da implementare)
-            // Per ora mostra un alert
-            console.log(`Navigazione alla colonna: ${columnId}`);
-            // window.location.href = `column.html?id=${columnId}&card=${card.dataset.id}`;
-        });
-
-        // Gestisci hover sulla card
-        card.addEventListener('mouseenter', function() {
-            const listContent = card.closest('.todo-list-content');
-            if (listContent) {
-                columnHoverStates.set(listContent, true);
-            }
-        });
-
-        card.addEventListener('mouseleave', function() {
-            const listContent = card.closest('.todo-list-content');
-            if (listContent) {
-                columnHoverStates.set(listContent, false);
-            }
-        });
-    });
-
-    // Auto-scroll carosello per ogni colonna
-    const todoLists = document.querySelectorAll('.todo-list-content');
-
-    todoLists.forEach(list => {
-        let scrollDirection = 1; // 1 = giù, -1 = su
-        let autoScrollInterval = null;
-        let userScrollTimeout = null;
-        let isUserScrolling = false;
-
-        // Conta il numero di card nella colonna
-        const cardCount = list.querySelectorAll('.card').length;
-
-        // Disabilita scroll se ci sono 3 o meno note
-        if (cardCount <= 3) {
-            list.style.overflowY = 'hidden';
-            return; // Non continuare con il setup dell'auto-scroll
-        }
-
-        // Funzione per auto-scroll
-        function startAutoScroll() {
-            if (autoScrollInterval) return;
-
-            autoScrollInterval = setInterval(() => {
-                if (isUserScrolling) return;
-
-                // Ferma auto-scroll se l'utente è in hover su una card
-                if (columnHoverStates.get(list)) return;
-
-                const maxScroll = list.scrollHeight - list.clientHeight;
-
-                // Scorri verso il basso
-                if (scrollDirection === 1) {
-                    list.scrollTop += 1;
-
-                    // Se raggiungiamo il fondo, cambia direzione
-                    if (list.scrollTop >= maxScroll - 5) {
-                        scrollDirection = -1;
-                    }
-                }
-                // Scorri verso l'alto
-                else {
-                    list.scrollTop -= 1;
-
-                    // Se raggiungiamo la cima, cambia direzione
-                    if (list.scrollTop <= 5) {
-                        scrollDirection = 1;
-                    }
-                }
-            }, 50); // Velocità scroll (ms)
-        }
-
-        // Ferma auto-scroll quando l'utente scrolla manualmente
-        list.addEventListener('wheel', () => {
-            isUserScrolling = true;
-            clearInterval(autoScrollInterval);
-            autoScrollInterval = null;
-
-            // Riprendi auto-scroll dopo 3 secondi di inattività
-            clearTimeout(userScrollTimeout);
-            userScrollTimeout = setTimeout(() => {
-                isUserScrolling = false;
-                startAutoScroll();
-            }, 3000);
-        });
-
-        // Ferma auto-scroll quando l'utente usa la scrollbar
-        list.addEventListener('scroll', (e) => {
-            if (!autoScrollInterval) {
-                isUserScrolling = true;
-
-                clearTimeout(userScrollTimeout);
-                userScrollTimeout = setTimeout(() => {
-                    isUserScrolling = false;
-                    startAutoScroll();
-                }, 3000);
-            }
-        });
-
-        // Avvia auto-scroll iniziale
-        startAutoScroll();
-    });
-
-    //test
-    aggiungiNota_run();
-
-    // Gestione chiusura dropdown al secondo click
-    const dropdowns = document.querySelectorAll('.dropdown');
-
-    dropdowns.forEach(dropdown => {
-        const button = dropdown.querySelector('[tabindex="0"]');
-        let isOpen = false;
-
-        button.addEventListener('click', function(e) {
-            if (isOpen) {
-                // Se è già aperto, chiudilo
-                this.blur();
-                isOpen = false;
-            } else {
-                // Se è chiuso, aprilo
-                isOpen = true;
-            }
-        });
-
-        // Rileva quando il dropdown si chiude (perdita di focus)
-        button.addEventListener('blur', function() {
-            setTimeout(() => {
-                isOpen = false;
-            }, 200);
-        });
-    });
+    // Inizializza la home page
+    initHomePage();
 });
