@@ -4,7 +4,7 @@ export const aggiungiNota_run = () =>  {
     // Filtro stato
     let stato = null
     const bottoneBacklog = document.getElementById('button-backlog')
-    const bottoneInProgress = document.getElementById('button-in_progress')
+    const bottoneInProgress = document.getElementById('button-inProgress')
     const bottoneReview = document.getElementById('button-review')
     const bottoneDone = document.getElementById('button-done')
     const labelStato = document.getElementById('label-stato')
@@ -31,7 +31,6 @@ export const aggiungiNota_run = () =>  {
 
     // Aggiungi nota
     const inputAggiunta = document.getElementById('bottone-aggiungi')
-    const inputTesto = document.getElementById('input-nota').value
 
     inputAggiunta.addEventListener('click', () => {
         if (stato === null) {
@@ -39,6 +38,7 @@ export const aggiungiNota_run = () =>  {
             return
         }
 
+        const inputTesto = document.getElementById('input-nota').value
         const listaDoveAggiungere = document.getElementById(stato)
         const nuovaNota =   "<div class='card w-full bg-base-100 card-lg shadow-sm'>" + 
                             "<div class='card-body'>" + 
