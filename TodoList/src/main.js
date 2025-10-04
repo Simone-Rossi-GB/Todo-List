@@ -124,4 +124,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //test
     aggiungiNota_run();
+
+    // Gestione chiusura dropdown al secondo click
+    const dropdowns = document.querySelectorAll('.dropdown');
+
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('[tabindex="0"]');
+        let isOpen = false;
+
+        button.addEventListener('click', function(e) {
+            if (isOpen) {
+                // Se è già aperto, chiudilo
+                this.blur();
+                isOpen = false;
+            } else {
+                // Se è chiuso, aprilo
+                isOpen = true;
+            }
+        });
+
+        // Rileva quando il dropdown si chiude (perdita di focus)
+        button.addEventListener('blur', function() {
+            setTimeout(() => {
+                isOpen = false;
+            }, 200);
+        });
+    });
 });

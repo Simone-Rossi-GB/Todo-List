@@ -34,10 +34,9 @@
     height: auto;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     gap: 20px;
     padding: 20px;
-    flex-wrap: wrap;
 }
 
 .div-title{
@@ -54,16 +53,14 @@
 }
 
 .todo-list{
-    width: 100%;
-    max-width: 280px;
-    min-width: min-content;
+    flex: 1;
+    min-width: 280px;
     height: calc(100vh - 220px);
     display: flex;
     flex-direction: column;
-    flex-shrink: 1;
     border-radius: 12px;
     overflow: hidden;
-    
+
 }
 
 .todo-list-content {
