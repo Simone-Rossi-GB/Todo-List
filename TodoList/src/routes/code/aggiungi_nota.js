@@ -1,55 +1,56 @@
-// Variabile per evitare inizializzazione multipla
-let isInitialized = false;
-
 export const aggiungiNota_run = () =>  {
-    // Previeni inizializzazione multipla
-    if (isInitialized) {
-        console.log('aggiungiNota_run già inizializzato, skip');
-        return;
-    }
-    isInitialized = true;
     console.log('aggiungiNota_run eseguito');
 
     // Filtro stato
     let stato = null
+    const labelStato = document.getElementById('label-stato')
+
+    // Clona i bottoni per rimuovere listener precedenti
     const bottoneBacklog = document.getElementById('button-backlog')
     const bottoneInProgress = document.getElementById('button-inProgress')
     const bottoneReview = document.getElementById('button-review')
     const bottoneDone = document.getElementById('button-done')
-    const labelStato = document.getElementById('label-stato')
 
-    bottoneBacklog.addEventListener('click', () => {
+    const newBacklog = bottoneBacklog.cloneNode(true)
+    const newInProgress = bottoneInProgress.cloneNode(true)
+    const newReview = bottoneReview.cloneNode(true)
+    const newDone = bottoneDone.cloneNode(true)
+
+    bottoneBacklog.parentNode.replaceChild(newBacklog, bottoneBacklog)
+    bottoneInProgress.parentNode.replaceChild(newInProgress, bottoneInProgress)
+    bottoneReview.parentNode.replaceChild(newReview, bottoneReview)
+    bottoneDone.parentNode.replaceChild(newDone, bottoneDone)
+
+    newBacklog.addEventListener('click', () => {
         stato = 'backlog'
         labelStato.textContent = 'Stato: Backlog ▼'
-        // Chiudi il dropdown rimuovendo il focus
         document.activeElement.blur()
     })
 
-    bottoneInProgress.addEventListener('click', () => {
+    newInProgress.addEventListener('click', () => {
         stato = 'in_progress'
         labelStato.textContent = 'Stato: In Progress ▼'
-        // Chiudi il dropdown rimuovendo il focus
         document.activeElement.blur()
     })
 
-    bottoneReview.addEventListener('click', () => {
+    newReview.addEventListener('click', () => {
         stato = 'review'
         labelStato.textContent = 'Stato: Review ▼'
-        // Chiudi il dropdown rimuovendo il focus
         document.activeElement.blur()
     })
 
-    bottoneDone.addEventListener('click', () => {
+    newDone.addEventListener('click', () => {
         stato = 'done'
         labelStato.textContent = 'Stato: Done ▼'
-        // Chiudi il dropdown rimuovendo il focus
         document.activeElement.blur()
     })
 
-    // Aggiungi nota
+    // Aggiungi nota - clona per rimuovere listener precedenti
     const inputAggiunta = document.getElementById('bottone-aggiungi')
+    const newInputAggiunta = inputAggiunta.cloneNode(true)
+    inputAggiunta.parentNode.replaceChild(newInputAggiunta, inputAggiunta)
 
-    inputAggiunta.addEventListener('click', () => {
+    newInputAggiunta.addEventListener('click', () => {
         if (stato === null) {
             alert('Seleziona uno stato per la nota')
             return
@@ -91,12 +92,24 @@ export const aggiungiNota_run = () =>  {
         actions.className = 'card-actions flex-row justify-center gap-2'
 
         const btnSposta = document.createElement('button')
-        btnSposta.className = 'btn btn-info btn-outline btn-sm'
+        btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
         btnSposta.textContent = 'Sposta'
 
         const btnElimina = document.createElement('button')
-        btnElimina.className = 'btn btn-error btn-outline btn-sm'
+        btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
         btnElimina.textContent = 'Elimina'
+
+        // Event listener per eliminare
+        btnElimina.addEventListener('click', () => {
+            if (confirm('Sei sicuro di voler eliminare questa nota?')) {
+                card.remove();
+            }
+        });
+
+        // Event listener per spostare
+        btnSposta.addEventListener('click', () => {
+            mostraMenuSposta(card);
+        });
 
         // Assembla la struttura
         actions.appendChild(btnSposta)
@@ -113,5 +126,64 @@ export const aggiungiNota_run = () =>  {
         document.getElementById('input-titolo').value = ''
         document.getElementById('input-descrizione').value = ''
     })
+}
+
+// Funzione per mostrare menu di spostamento
+function mostraMenuSposta(card) {
+    // Trova la colonna corrente
+    const colonnaCorrente = card.closest('.todo-list');
+    const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : '';
+
+    // Crea un overlay con menu
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+
+    const menu = document.createElement('div');
+    menu.className = 'card bg-base-100 shadow-xl';
+    menu.style.cssText = 'width: 300px; padding: 20px;';
+
+    menu.innerHTML = `
+        <h3 class="text-lg font-bold mb-4">Sposta nota in:</h3>
+        <div class="flex flex-col gap-2">
+            ${colonnaCorrenteId !== 'backlog' ? '<button class="btn btn-outline" data-target="backlog">Backlog</button>' : ''}
+            ${colonnaCorrenteId !== 'in_progress' ? '<button class="btn btn-outline" data-target="in_progress">In Progress</button>' : ''}
+            ${colonnaCorrenteId !== 'review' ? '<button class="btn btn-outline" data-target="review">Review</button>' : ''}
+            ${colonnaCorrenteId !== 'done' ? '<button class="btn btn-outline" data-target="done">Done</button>' : ''}
+            <button class="btn btn-ghost mt-2" id="btn-annulla-sposta">Annulla</button>
+        </div>
+    `;
+
+    overlay.appendChild(menu);
+    document.body.appendChild(overlay);
+
+    // Event listener per i bottoni
+    const bottoni = menu.querySelectorAll('[data-target]');
+    bottoni.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-target');
+            spostaCard(card, target);
+            overlay.remove();
+        });
+    });
+
+    // Annulla
+    menu.querySelector('#btn-annulla-sposta').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // Chiudi cliccando fuori
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+}
+
+function spostaCard(card, targetId) {
+    const targetColonna = document.getElementById(targetId);
+    const targetContent = targetColonna.querySelector('.todo-list-content');
+
+    // Sposta la card
+    targetContent.appendChild(card);
 }
 

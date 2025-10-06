@@ -1,4 +1,7 @@
 import { aggiungiNota_run } from './code/aggiungi_nota.js';
+import { inizializzaConfig } from './code/salva_configurazione.js';
+import { ricercaNote_run } from './code/ricerca_note.js';
+import { gestioneCard_run } from './code/gestione_card.js';
 
 // Sistema di routing SPA
 class Router {
@@ -17,6 +20,22 @@ class Router {
     async handleRoute() {
         const hash = window.location.hash.slice(1) || '/';
         console.log('Navigating to:', hash);
+
+        // Chiudi tutti i dropdown aperti
+        const activeElement = document.activeElement;
+        if (activeElement && activeElement.blur) {
+            activeElement.blur();
+        }
+
+        // Nascondi la barra di ricerca nelle impostazioni e nel profilo
+        const searchBar = document.querySelector('.input.bg-base-200');
+        if (searchBar) {
+            if (hash === '/settings' || hash === '/profile') {
+                searchBar.style.display = 'none';
+            } else {
+                searchBar.style.display = 'flex';
+            }
+        }
 
         if (this.routes[hash]) {
             this.currentRoute = hash;
@@ -141,15 +160,34 @@ function initHomePage() {
         let userScrollTimeout = null;
         let isUserScrolling = false;
 
-        const cardCount = list.querySelectorAll('.card').length;
+        function checkScrollable() {
+            const cardCount = list.querySelectorAll('.card').length;
 
-        // Disabilita scroll se ci sono 3 o meno note
-        if (cardCount <= 3) {
-            list.style.overflowY = 'hidden';
-            return;
+            // Abilita/disabilita scroll in base al numero di carte
+            if (cardCount <= 3) {
+                list.style.overflowY = 'hidden';
+                if (autoScrollInterval) {
+                    clearInterval(autoScrollInterval);
+                    autoScrollInterval = null;
+                }
+            } else {
+                list.style.overflowY = 'auto';
+                if (!autoScrollInterval && !isUserScrolling) {
+                    startAutoScroll();
+                }
+            }
         }
 
         function startAutoScroll() {
+            // Controlla se autoscroll è abilitato nelle impostazioni
+            if (!window.appConfig || !window.appConfig.autoScroll) {
+                console.log('Autoscroll disabilitato dalle impostazioni');
+                return;
+            }
+
+            const cardCount = list.querySelectorAll('.card').length;
+            if (cardCount <= 3) return; // Non avviare se poche carte
+
             if (autoScrollInterval) return;
 
             autoScrollInterval = setInterval(() => {
@@ -171,6 +209,16 @@ function initHomePage() {
                 }
             }, 50);
         }
+
+        // Osserva quando vengono aggiunte/rimosse card
+        const observer = new MutationObserver(() => {
+            checkScrollable();
+        });
+
+        observer.observe(list, {
+            childList: true,
+            subtree: false
+        });
 
         list.addEventListener('wheel', () => {
             isUserScrolling = true;
@@ -196,11 +244,18 @@ function initHomePage() {
             }
         });
 
-        startAutoScroll();
+        // Check iniziale e avvio
+        checkScrollable();
     });
 
     // Riattiva la funzione di aggiunta note
     aggiungiNota_run();
+
+    // Attiva la ricerca note
+    ricercaNote_run();
+
+    // Attiva gestione card (Sposta/Elimina)
+    gestioneCard_run();
 
     // Gestione chiusura dropdown al secondo click
     const dropdowns = document.querySelectorAll('.dropdown');
@@ -229,7 +284,10 @@ function initHomePage() {
 }
 
 // Inizializzazione al caricamento della pagina
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Carica e applica configurazione all'avvio
+    await inizializzaConfig();
+
     // Salva il contenuto originale della home
     originalHomeContent = document.getElementById('app-content').innerHTML;
 
@@ -238,6 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Definisci le route
     router.addRoute('/', async () => {
+        // Ricarica configurazione
+        await inizializzaConfig();
+
         // Route home - ripristina contenuto originale
         const appContent = document.getElementById('app-content');
         appContent.innerHTML = originalHomeContent;

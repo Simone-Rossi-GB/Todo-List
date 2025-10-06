@@ -12,7 +12,12 @@
       {
         "title": "todolist",
         "width": 1200,
-        "height": 800
+        "height": 800,
+        "resizable": false,
+        "minWidth": 1200,
+        "minHeight": 800,
+        "maxWidth": 1200,
+        "maxHeight": 800
       }
     ],
     "security": {

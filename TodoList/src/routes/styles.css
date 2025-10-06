@@ -145,3 +145,97 @@ body {
 .card:hover {
     transform: scale(1.03);
 }
+
+/* Disabilita hover sulla card impostazioni */
+.settings-card {
+    cursor: default;
+}
+
+.settings-card:hover {
+    transform: none;
+}
+
+/* Fix per la X dell'input search */
+.input input[type="search"] {
+    flex: 1;
+    width: 100%;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1em;
+    width: 1em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+    background-size: 1em 1em;
+    cursor: pointer;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+input[type="search"]::-webkit-search-cancel-button:hover {
+    opacity: 0.8;
+}
+
+/* ===== TEMA SCURO ===== */
+[data-theme="dark"] body {
+    background: #0f172a;
+}
+
+[data-theme="dark"] .navbar-simple-top {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .todo-container {
+    background: #1e293b;
+}
+
+/* Gradienti più scuri e intensi per tema scuro */
+[data-theme="dark"] #backlog {
+    background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%);
+}
+
+[data-theme="dark"] #in_progress {
+    background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);
+}
+
+[data-theme="dark"] #review {
+    background: linear-gradient(135deg, #0369a1 0%, #0c4a6e 100%);
+}
+
+[data-theme="dark"] #done {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+}
+
+/* Card nel tema scuro */
+[data-theme="dark"] .card {
+    background: #334155;
+    border: 1px solid #475569;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .card:hover {
+    border-color: #64748b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .card-title {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .card-body p {
+    color: #cbd5e1;
+}
+
+/* Scrollbar tema scuro */
+[data-theme="dark"] .todo-list-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .todo-list-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="dark"] .todo-list-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+}

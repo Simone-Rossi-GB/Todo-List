@@ -1,49 +1,74 @@
 <!-- Contenuto Settings -->
-<div class="todo-container p-6 elemento-centrato">
-    <h1 class="text-3xl font-bold mb-4">Impostazioni</h1>
+<div class="todo-container p-4 elemento-centrato">
+    <h1 class="text-3xl font-bold mb-3">Impostazioni</h1>
 
-    <div class="mt-6">
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title">Preferenze Applicazione</h2>
+    <div class="mt-3">
+        <div class="card bg-base-100 shadow-xl settings-card">
+            <div class="card-body py-4">
+                <h2 class="card-title mb-2">Preferenze Applicazione</h2>
 
-                <div class="form-control mt-4">
-                    <label class="label cursor-pointer">
+                <div class="divider my-2">Profilo</div>
+
+                <div class="form-control mb-2">
+                    <label class="label py-1">
+                        <span class="label-text">Foto Profilo</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <div class="avatar">
+                            <div class="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                <img id="preview-avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
+                            </div>
+                        </div>
+                        <input type="file" accept="image/*" class="file-input file-input-bordered file-input-sm w-full max-w-xs" id="input-foto-profilo" />
+                    </div>
+                </div>
+
+                <div class="divider my-2">Aspetto</div>
+
+                <div class="form-control">
+                    <label class="label cursor-pointer py-2">
                         <span class="label-text">Tema Scuro</span>
-                        <input type="checkbox" class="toggle toggle-primary" />
+                        <input type="checkbox" class="toggle toggle-primary" id="checkBox_tema_scuro"/>
                     </label>
                 </div>
 
                 <div class="form-control">
-                    <label class="label cursor-pointer">
-                        <span class="label-text">Notifiche</span>
-                        <input type="checkbox" class="toggle toggle-primary" checked />
-                    </label>
-                </div>
-
-                <div class="form-control">
-                    <label class="label cursor-pointer">
+                    <label class="label cursor-pointer py-2">
                         <span class="label-text">Auto-scroll Colonne</span>
-                        <input type="checkbox" class="toggle toggle-primary" checked />
+                        <input type="checkbox" class="toggle toggle-primary" id="checkBox_autoScroll"/>
                     </label>
                 </div>
 
-                <div class="divider"></div>
+                <div class="divider my-2">Lingua</div>
 
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Lingua</span>
+                <div class="form-control mb-2">
+                    <label class="label py-1">
+                        <span class="label-text">Seleziona Lingua</span>
                     </label>
-                    <select class="select select-bordered">
-                        <option>Italiano</option>
-                        <option>English</option>
-                        <option>Español</option>
+                    <select class="select select-bordered w-full max-w-xs" id="form_lingua">
+                        <option value="it">Italiano</option>
+                        <option value="en">English</option>
                     </select>
                 </div>
 
-                <div class="card-actions justify-end mt-6">
-                    <button class="btn btn-primary">Salva</button>
-                    <button class="btn btn-ghost">Annulla</button>
+                <div class="card-actions justify-end mt-3">
+                    <button class="btn btn-primary" id="btn-salva-settings">Salva</button>
+                </div>
+
+                <!-- Notifica successo -->
+                <div id="notifica-successo" class="alert alert-success mt-3" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Impostazioni salvate con successo!</span>
+                </div>
+
+                <!-- Alert errore -->
+                <div id="alert-errore" class="alert alert-error mt-3" style="display: none;">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span id="alert-errore-text"></span>
                 </div>
             </div>
         </div>

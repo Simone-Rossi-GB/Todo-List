@@ -10,5 +10,8 @@
     "@tauri-apps/cli": "^2",
     "daisyui": "^5.1.23",
     "tailwindcss": "^4.1.13"
+  },
+  "dependencies": {
+    "@tauri-apps/plugin-fs": "^2.4.2"
   }
 }
