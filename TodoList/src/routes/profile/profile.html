@@ -1,38 +1,45 @@
 <!-- Contenuto Profile -->
 <div class="todo-container p-6 elemento-centrato">
-    <h1 class="text-3xl font-bold mb-4">Profilo Utente</h1>
+    <h1 class="text-3xl font-bold mb-3">Profilo Utente</h1>
 
-    <div class="mt-6">
-        <div class="flex flex-col items-center gap-4">
+    <div class="mt-5">
+        <div class="flex flex-col items-center gap-3">
             <div class="avatar">
-                <div class="w-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                <div class="w-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                     <img id="profile-avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
                 </div>
             </div>
 
             <div class="text-center">
-                <h2 class="text-2xl font-semibold">Nome Utente</h2>
+                <h2 class="text-2xl font-semibold" id="nome_utente">Nome Utente</h2>
                 <p class="text-gray-600" id="profile-email">user@example.com</p>
             </div>
 
-            <div class="divider"></div>
+            <div class="divider my-1"></div>
 
             <div class="w-full max-w-md">
                 <div class="form-control">
                     <label class="label">
-                        <span class="label-text">Nome</span>
+                        <span class="label-text">Nome Utente</span>
                     </label>
-                    <input type="text" placeholder="Nome" class="input input-bordered" id="profile-nome" />
+                    <input type="text" placeholder="Nome" class="input input-bordered" id="profile-nome-utente" />
                 </div>
 
-                <div class="form-control mt-4">
+                <div class="form-control mt-3">
                     <label class="label">
-                        <span class="label-text">Email</span>
+                        <span class="label-text">Vecchia Password</span>
                     </label>
-                    <input type="email" placeholder="Email" class="input input-bordered" id="profile-email-input" />
+                    <input type="password" placeholder="Password" class="input input-bordered" id="profile-old-password-input" />
                 </div>
 
-                <div class="form-control mt-6">
+                <div class="form-control mt-3">
+                    <label class="label">
+                        <span class="label-text">Nuova Password</span>
+                    </label>
+                    <input type="password" placeholder="Password" class="input input-bordered" id="profile-new-password-input" />
+                </div>
+
+                <div class="form-control mt-5">
                     <button class="btn btn-primary">Salva Modifiche</button>
                 </div>
             </div>
