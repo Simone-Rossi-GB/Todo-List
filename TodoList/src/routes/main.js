@@ -357,17 +357,63 @@ const SaveToLocalStorage = (key, content) => {
     localStorage.setItem(key, jsonData)
 }
 
+const CreaCard = (titolo, descrizione) => {
+        // Crea l'elemento card
+        const card = document.createElement('div')
+        card.className = 'card w-full bg-base-100 card-lg shadow-sm'
+
+        const cardBody = document.createElement('div')
+        cardBody.className = 'card-body'
+
+        const title = document.createElement('h2')
+        title.className = 'card-title text-base'
+        title.textContent = titolo
+
+        const description = document.createElement('p')
+        description.className = 'text-sm'
+        description.textContent = descrizione
+
+        const actions = document.createElement('div')
+        actions.className = 'card-actions flex-row justify-center gap-2'
+
+        const btnSposta = document.createElement('button')
+        btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
+        btnSposta.textContent = 'Sposta'
+
+        const btnElimina = document.createElement('button')
+        btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
+        btnElimina.textContent = 'Elimina'
+
+        // Event listener per eliminare
+        btnElimina.addEventListener('click', () => {
+            if (confirm('Sei sicuro di voler eliminare questa nota?')) {
+                card.remove();
+            }
+        });
+
+        // Event listener per spostare
+        btnSposta.addEventListener('click', () => {
+            mostraMenuSposta(card);
+        });
+
+        // Assembla la struttura
+        actions.appendChild(btnSposta)
+        actions.appendChild(btnElimina)
+        cardBody.appendChild(title)
+        cardBody.appendChild(description)
+        cardBody.appendChild(actions)
+        card.appendChild(cardBody)
+
+        // Ritorna la card creata
+        return card
+}
+
 const RefreshView = (list, items) => {
     list.innerHTML = ''
 
     items.forEach((item) => {
-        const card = document.createElement('div')
-        card.className = 'card w-full bg-base-100 card-lg shadow-sm mb-2'
-        const cardBody = document.createElement('div')
-        cardBody.className = 'card-body'
-        const cardTitle = document.createElement('h2')
-        cardTitle.className = 'card-title text-base'
-        cardTitle.innerText = item.content
+        const card = CreaCard(item.title, item.description)
+        list.appendChild(card)
     })
 }
 
