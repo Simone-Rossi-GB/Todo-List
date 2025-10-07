@@ -346,3 +346,32 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Inizializza la home page
     initHomePage();
 });
+
+// Salvataggio su file delle liste (backlog, in_progress, review, done, note)
+const LoadFromLocalStorage = (key) => {
+    return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+const SaveToLocalStorage = (key, content) => {
+    const jsonData = JSON.stringify(content)
+    localStorage.setItem(key, jsonData)
+}
+
+const RefreshView = (list, items) => {
+    list.innerHTML = ''
+
+    items.forEach((item) => {
+        const card = document.createElement('div')
+        card.className = 'card w-full bg-base-100 card-lg shadow-sm mb-2'
+        const cardBody = document.createElement('div')
+        cardBody.className = 'card-body'
+        const cardTitle = document.createElement('h2')
+        cardTitle.className = 'card-title text-base'
+        cardTitle.innerText = item.content
+    })
+}
+
+//backlog
+const backlogNote = document.getElementById('backlog-note')
+const backlogList = LoadFromLocalStorage('backlog-list')
+    
