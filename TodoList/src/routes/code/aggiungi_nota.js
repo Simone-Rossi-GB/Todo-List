@@ -73,51 +73,8 @@ export const aggiungiNota_run = () =>  {
         const colonnaStato = document.getElementById(stato)
         const listaDoveAggiungere = colonnaStato.querySelector('.todo-list-content')
 
-        // Crea l'elemento card
-        const card = document.createElement('div')
-        card.className = 'card w-full bg-base-100 card-lg shadow-sm'
-
-        const cardBody = document.createElement('div')
-        cardBody.className = 'card-body'
-
-        const title = document.createElement('h2')
-        title.className = 'card-title text-base'
-        title.textContent = inputTitolo
-
-        const description = document.createElement('p')
-        description.className = 'text-sm'
-        description.textContent = inputDescrizione
-
-        const actions = document.createElement('div')
-        actions.className = 'card-actions flex-row justify-center gap-2'
-
-        const btnSposta = document.createElement('button')
-        btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
-        btnSposta.textContent = 'Sposta'
-
-        const btnElimina = document.createElement('button')
-        btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
-        btnElimina.textContent = 'Elimina'
-
-        // Event listener per eliminare
-        btnElimina.addEventListener('click', () => {
-            if (confirm('Sei sicuro di voler eliminare questa nota?')) {
-                card.remove();
-            }
-        });
-
-        // Event listener per spostare
-        btnSposta.addEventListener('click', () => {
-            mostraMenuSposta(card);
-        });
-
-        // Assembla la struttura
-        actions.appendChild(btnSposta)
-        actions.appendChild(btnElimina)
-        cardBody.appendChild(title)
-        cardBody.appendChild(description)
-        cardBody.appendChild(actions)
-        card.appendChild(cardBody)
+        // Crea la card
+        const card = creaCard(inputTitolo, inputDescrizione)
 
         // Aggiungi la card al contenitore
         listaDoveAggiungere.appendChild(card)
@@ -125,6 +82,11 @@ export const aggiungiNota_run = () =>  {
         // Pulisci gli input
         document.getElementById('input-titolo').value = ''
         document.getElementById('input-descrizione').value = ''
+
+        // Salva su localStorage
+        const items = LoadFromLocalStorage(stato + '_notes')
+        items.push({ title: inputTitolo, description: inputDescrizione })
+        SaveToLocalStorage(stato + '_notes', items)
     })
 }
 
@@ -187,3 +149,71 @@ function spostaCard(card, targetId) {
     targetContent.appendChild(card);
 }
 
+export const creaCard = (titolo, descrizione) => {
+        // Crea l'elemento card
+        const card = document.createElement('div')
+        card.className = 'card w-full bg-base-100 card-lg shadow-sm'
+
+        const cardBody = document.createElement('div')
+        cardBody.className = 'card-body'
+
+        const title = document.createElement('h2')
+        title.className = 'card-title text-base'
+        title.textContent = titolo
+
+        const description = document.createElement('p')
+        description.className = 'text-sm'
+        description.textContent = descrizione
+
+        const actions = document.createElement('div')
+        actions.className = 'card-actions flex-row justify-center gap-2'
+
+        const btnSposta = document.createElement('button')
+        btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
+        btnSposta.textContent = 'Sposta'
+
+        const btnElimina = document.createElement('button')
+        btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
+        btnElimina.textContent = 'Elimina'
+
+        // Event listener per eliminare
+        btnElimina.addEventListener('click', () => {
+            if (confirm('Sei sicuro di voler eliminare questa nota?')) {
+                card.remove();
+            }
+        });
+
+        // Event listener per spostare
+        btnSposta.addEventListener('click', () => {
+            mostraMenuSposta(card);
+        });
+
+        // Assembla la struttura
+        actions.appendChild(btnSposta)
+        actions.appendChild(btnElimina)
+        cardBody.appendChild(title)
+        cardBody.appendChild(description)
+        cardBody.appendChild(actions)
+        card.appendChild(cardBody)
+
+        // Ritorna la card creata
+        return card
+}
+
+export const LoadFromLocalStorage = (key) => {
+    return JSON.parse(localStorage.getItem(key)) || [];
+}
+
+const SaveToLocalStorage = (key, content) => {
+    const jsonData = JSON.stringify(content)
+    localStorage.setItem(key, jsonData)
+}
+
+const RefreshView = (list, items) => {
+    list.innerHTML = ''
+
+    items.forEach((item) => {
+        const card = CreaCard(item.title, item.description)
+        list.appendChild(card)
+    })
+}

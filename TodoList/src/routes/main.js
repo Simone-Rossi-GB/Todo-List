@@ -1,4 +1,4 @@
-import { aggiungiNota_run } from './code/aggiungi_nota.js';
+import { aggiungiNota_run, LoadFromLocalStorage, creaCard } from './code/aggiungi_nota.js';
 import { inizializzaConfig } from './code/salva_configurazione.js';
 import { ricercaNote_run } from './code/ricerca_note.js';
 import { gestioneCard_run } from './code/gestione_card.js';
@@ -347,77 +347,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     initHomePage();
 });
 
-// Salvataggio su file delle liste (backlog, in_progress, review, done, note)
-const LoadFromLocalStorage = (key) => {
-    return JSON.parse(localStorage.getItem(key)) || [];
-}
-
-const SaveToLocalStorage = (key, content) => {
-    const jsonData = JSON.stringify(content)
-    localStorage.setItem(key, jsonData)
-}
-
-const CreaCard = (titolo, descrizione) => {
-        // Crea l'elemento card
-        const card = document.createElement('div')
-        card.className = 'card w-full bg-base-100 card-lg shadow-sm'
-
-        const cardBody = document.createElement('div')
-        cardBody.className = 'card-body'
-
-        const title = document.createElement('h2')
-        title.className = 'card-title text-base'
-        title.textContent = titolo
-
-        const description = document.createElement('p')
-        description.className = 'text-sm'
-        description.textContent = descrizione
-
-        const actions = document.createElement('div')
-        actions.className = 'card-actions flex-row justify-center gap-2'
-
-        const btnSposta = document.createElement('button')
-        btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
-        btnSposta.textContent = 'Sposta'
-
-        const btnElimina = document.createElement('button')
-        btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
-        btnElimina.textContent = 'Elimina'
-
-        // Event listener per eliminare
-        btnElimina.addEventListener('click', () => {
-            if (confirm('Sei sicuro di voler eliminare questa nota?')) {
-                card.remove();
-            }
-        });
-
-        // Event listener per spostare
-        btnSposta.addEventListener('click', () => {
-            mostraMenuSposta(card);
-        });
-
-        // Assembla la struttura
-        actions.appendChild(btnSposta)
-        actions.appendChild(btnElimina)
-        cardBody.appendChild(title)
-        cardBody.appendChild(description)
-        cardBody.appendChild(actions)
-        card.appendChild(cardBody)
-
-        // Ritorna la card creata
-        return card
-}
-
-const RefreshView = (list, items) => {
-    list.innerHTML = ''
-
-    items.forEach((item) => {
-        const card = CreaCard(item.title, item.description)
-        list.appendChild(card)
+// Caricamento note da localStorage
+const loadNotesFromLocalStorage = (key, section) => {
+    const notes = LoadFromLocalStorage(key)
+    console.log(notes)
+    notes.forEach((note) => {
+        const colonnaStato = document.getElementById(section);
+        const listaDoveAggiungere = colonnaStato.querySelector('.todo-list-content');
+        const card = creaCard(note.title, note.description);
+        listaDoveAggiungere.appendChild(card);
     })
 }
 
-//backlog
-const backlogNote = document.getElementById('backlog-note')
-const backlogList = LoadFromLocalStorage('backlog-list')
-    
+loadNotesFromLocalStorage('backlog_notes', 'backlog');
+loadNotesFromLocalStorage('in_progress_notes', 'in_progress');
+loadNotesFromLocalStorage('review_notes', 'review');
+loadNotesFromLocalStorage('done_notes', 'done');
