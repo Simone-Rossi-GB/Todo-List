@@ -1,2 +1,4 @@
 // JavaScript specifico per Review
-console.log('Review page loaded');
+import {loadNotesFromLocalStorage} from '../code/main.js'
+
+loadNotesFromLocalStorage('review_notes', 'review')

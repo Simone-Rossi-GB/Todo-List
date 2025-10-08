@@ -1,2 +1,4 @@
 // JavaScript specifico per Done
-console.log('Done page loaded');
+import {loadNotesFromLocalStorage} from './main.js'
+
+loadNotesFromLocalStorage('done_notes', 'done')

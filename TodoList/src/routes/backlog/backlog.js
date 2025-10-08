@@ -1,2 +1,4 @@
 // JavaScript specifico per Backlog
-console.log('Backlog page loaded');
+import {loadNotesFromLocalStorage} from '../code/main.js'
+
+loadNotesFromLocalStorage('backlog_notes', 'backlog')

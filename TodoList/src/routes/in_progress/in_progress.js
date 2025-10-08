@@ -1,2 +1,4 @@
 // JavaScript specifico per In Progress
-console.log('In Progress page loaded');
+import {loadNotesFromLocalStorage} from '../code/main.js'
+
+loadNotesFromLocalStorage('in_progress_notes', 'in_progress')

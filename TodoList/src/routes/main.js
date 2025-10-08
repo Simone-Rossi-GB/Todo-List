@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // Caricamento note da localStorage
-const loadNotesFromLocalStorage = (key, section) => {
+export const loadNotesFromLocalStorage = (key, section) => {
     const notes = LoadFromLocalStorage(key)
     console.log(notes)
     notes.forEach((note) => {
