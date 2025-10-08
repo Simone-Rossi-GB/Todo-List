@@ -89,6 +89,7 @@ export const aggiungiNota_run = () =>  {
         const items = LoadFromLocalStorage(stato + '_notes')
         items.push({ title: inputTitolo, description: inputDescrizione })
         SaveToLocalStorage(stato + '_notes', items)
+        console.log('Nota aggiunta al localStorage:', stato + '_notes', items)
     })
 }
 
@@ -133,14 +134,17 @@ function mostraMenuSposta(card) {
             const descrizione = card.querySelector('p').textContent
             const items = LoadFromLocalStorage(colonnaCorrenteId + '_notes')
             const index = items.findIndex(item => item.title === titolo && item.description === descrizione)
+            console.log('Spostamento - Colonna origine:', colonnaCorrenteId, 'Items trovati:', items, 'Index:', index)
             if (index !== -1) {
                 items.splice(index, 1);
                 SaveToLocalStorage(colonnaCorrenteId + '_notes', items)
+                console.log('Rimosso da', colonnaCorrenteId + '_notes', items)
             }
 
             const items2 = LoadFromLocalStorage(target + '_notes')
             items2.push({ title: titolo, description: descrizione })
             SaveToLocalStorage(target + '_notes', items2)
+            console.log('Aggiunto a', target + '_notes', items2)
         });
     });
 
@@ -186,10 +190,12 @@ export const creaCard = (titolo, descrizione, stato) => {
 
         const btnSposta = document.createElement('button')
         btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
+        btnSposta.setAttribute('data-i18n', 'home.moveButton')
         btnSposta.textContent = getTraduzione('home.moveButton')
 
         const btnElimina = document.createElement('button')
         btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
+        btnElimina.setAttribute('data-i18n', 'home.deleteButton')
         btnElimina.textContent = getTraduzione('home.deleteButton')
 
         console.log(stato);
@@ -197,14 +203,20 @@ export const creaCard = (titolo, descrizione, stato) => {
         // Event listener per eliminare
         btnElimina.addEventListener('click', () => {
             if (confirm(getTraduzione('home.confirmDelete'))) {
+                // Determina la colonna corrente dal DOM
+                const colonnaCorrente = card.closest('.todo-list');
+                const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
+
                 card.remove();
 
                 // Rimuovi dal localStorage
-                const items = LoadFromLocalStorage(stato + '_notes');
+                const items = LoadFromLocalStorage(colonnaCorrenteId + '_notes');
                 const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
+                console.log('Eliminazione - Colonna:', colonnaCorrenteId, 'Items:', items, 'Index:', index)
                 if (index !== -1) {
                     items.splice(index, 1);
-                    SaveToLocalStorage(stato + '_notes', items);
+                    SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
+                    console.log('Eliminato da localStorage:', colonnaCorrenteId + '_notes', items)
                 }
             }
         });
@@ -233,4 +245,5 @@ export const LoadFromLocalStorage = (key) => {
 export const SaveToLocalStorage = (key, content) => {
     const jsonData = JSON.stringify(content)
     localStorage.setItem(key, jsonData)
+    console.log('SaveToLocalStorage chiamato - Key:', key, 'Content:', content)
 }

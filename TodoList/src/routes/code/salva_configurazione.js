@@ -164,6 +164,32 @@ function mostraAlert(tipo, messaggio) {
     }
 }
 
+async function rimuoviFotoProfilo() {
+    try {
+        const { appConfigDir, join } = window.__TAURI__.path;
+        const { remove, exists } = window.__TAURI__.fs;
+
+        const configDir = await appConfigDir();
+        const extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+
+        for (const ext of extensions) {
+            const avatarPath = await join(configDir, `avatar.${ext}`);
+            const fileExists = await exists(avatarPath);
+
+            if (fileExists) {
+                await remove(avatarPath);
+                console.log('Foto profilo rimossa:', avatarPath);
+                return true;
+            }
+        }
+
+        return false;
+    } catch (error) {
+        console.error('Errore rimozione foto:', error);
+        return false;
+    }
+}
+
 export const salvaConfigurazione_run = async () => {
     console.log('salvaConfigurazione_run eseguito');
 
@@ -173,6 +199,8 @@ export const salvaConfigurazione_run = async () => {
     const inputFoto = document.getElementById('input-foto-profilo');
     const previewAvatar = document.getElementById('preview-avatar');
     const btnSalva = document.getElementById('btn-salva-settings');
+    const btnResettaNote = document.getElementById('btn-resetta-note');
+    const btnRimuoviFoto = document.getElementById('btn-rimuovi-foto');
 
     if (!btnSalva) {
         console.error('Bottone salva non trovato!');
@@ -221,6 +249,78 @@ export const salvaConfigurazione_run = async () => {
             reader.readAsDataURL(file);
         }
     });
+
+    // Event listener per resettare le note
+    if (btnResettaNote) {
+        const newBtnResetta = btnResettaNote.cloneNode(true);
+        btnResettaNote.parentNode.replaceChild(newBtnResetta, btnResettaNote);
+
+        newBtnResetta.addEventListener('click', async () => {
+            // Usa getTraduzione dalla finestra globale se disponibile
+            const confirmMsg = window.carica_lingua ?
+                (await import('../code/carica_lingua.js')).getTraduzione('settings.confirmReset') :
+                'Sei sicuro di voler cancellare tutte le note? Questa azione è irreversibile!';
+
+            if (confirm(confirmMsg)) {
+                // Cancella tutte le note dal localStorage
+                localStorage.removeItem('backlog_notes');
+                localStorage.removeItem('in_progress_notes');
+                localStorage.removeItem('review_notes');
+                localStorage.removeItem('done_notes');
+
+                const successMsg = window.carica_lingua ?
+                    (await import('../code/carica_lingua.js')).getTraduzione('settings.notesReset') :
+                    'Tutte le note sono state cancellate!';
+
+                mostraAlert('success', successMsg);
+
+                // Ricarica la pagina dopo 1 secondo per mostrare le colonne vuote
+                setTimeout(() => {
+                    window.location.hash = '/';
+                    window.location.reload();
+                }, 1000);
+            }
+        });
+    }
+
+    // Event listener per rimuovere foto profilo
+    if (btnRimuoviFoto) {
+        const newBtnRimuoviFoto = btnRimuoviFoto.cloneNode(true);
+        btnRimuoviFoto.parentNode.replaceChild(newBtnRimuoviFoto, btnRimuoviFoto);
+
+        newBtnRimuoviFoto.addEventListener('click', async () => {
+            const rimosso = await rimuoviFotoProfilo();
+
+            if (rimosso) {
+                // Ripristina immagine di default
+                const defaultImg = 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp';
+                previewAvatar.src = defaultImg;
+
+                // Aggiorna navbar
+                const navbarAvatar = document.querySelector('.navbar .avatar img');
+                if (navbarAvatar) {
+                    navbarAvatar.src = defaultImg;
+                }
+
+                // Aggiorna config
+                const config = await caricaConfig();
+                config.hasFotoProfilo = false;
+                await salvaConfig(config);
+
+                const successMsg = window.carica_lingua ?
+                    (await import('../code/carica_lingua.js')).getTraduzione('settings.photoRemoved') :
+                    'Foto profilo rimossa!';
+
+                mostraAlert('success', successMsg);
+
+                // Reset input file
+                inputFoto.value = '';
+                nuovoFilefoto = null;
+            } else {
+                mostraAlert('error', 'Errore nella rimozione della foto');
+            }
+        });
+    }
 
     // Rimuovi event listener precedenti (se esistono)
     const newBtnSalva = btnSalva.cloneNode(true);

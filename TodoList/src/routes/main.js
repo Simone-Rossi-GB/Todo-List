@@ -299,9 +299,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Carica la lingua dalla configurazione
     await carica_lingua(config.lingua);
 
-    // Salva il contenuto originale della home
-    originalHomeContent = document.getElementById('app-content').innerHTML;
-
     // Inizializza il router
     const router = new Router();
 
@@ -319,6 +316,13 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Reinizializza la home page
         initHomePage();
+
+        // Ricarica note dal localStorage
+        loadNotesFromLocalStorage('backlog_notes', 'backlog');
+        loadNotesFromLocalStorage('in_progress_notes', 'in_progress');
+        loadNotesFromLocalStorage('review_notes', 'review');
+        loadNotesFromLocalStorage('done_notes', 'done');
+
         console.log('Home route loaded');
     });
 
@@ -354,11 +358,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         await loadRoute('auth');
     });
 
-    // Avvia il router
-    router.start();
+    // Salva il contenuto originale della home (senza note, verranno caricate dalla route)
+    originalHomeContent = document.getElementById('app-content').innerHTML;
 
-    // Inizializza la home page
-    initHomePage();
+    // Avvia il router (questo caricherà la route '/' che caricherà le note)
+    router.start();
 });
 
 // Caricamento note da localStorage
@@ -368,12 +372,7 @@ export const loadNotesFromLocalStorage = (key, section) => {
     notes.forEach((note) => {
         const colonnaStato = document.getElementById(section);
         const listaDoveAggiungere = colonnaStato.querySelector('.todo-list-content');
-        const card = creaCard(note.title, note.description);
+        const card = creaCard(note.title, note.description, section);
         listaDoveAggiungere.appendChild(card);
     })
 }
-
-loadNotesFromLocalStorage('backlog_notes', 'backlog');
-loadNotesFromLocalStorage('in_progress_notes', 'in_progress');
-loadNotesFromLocalStorage('review_notes', 'review');
-loadNotesFromLocalStorage('done_notes', 'done');

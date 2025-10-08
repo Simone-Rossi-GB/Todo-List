@@ -19,7 +19,10 @@
                                 <img id="preview-avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
                             </div>
                         </div>
-                        <input type="file" accept="image/*" class="file-input file-input-bordered file-input-sm w-full max-w-xs" id="input-foto-profilo" />
+                        <div class="flex flex-col gap-2 flex-1">
+                            <input type="file" accept="image/*" class="file-input file-input-bordered file-input-sm w-full max-w-xs" id="input-foto-profilo" />
+                            <button class="btn btn-ghost btn-sm w-full max-w-xs" id="btn-rimuovi-foto" data-i18n="settings.removePhoto">Rimuovi Foto</button>
+                        </div>
                     </div>
                 </div>
 
@@ -51,7 +54,8 @@
                     </select>
                 </div>
 
-                <div class="card-actions justify-end mt-3">
+                <div class="card-actions justify-between mt-3">
+                    <button class="btn btn-error" id="btn-resetta-note" data-i18n="settings.resetNotes">Resetta tutte le note</button>
                     <button class="btn btn-primary" id="btn-salva-settings" data-i18n="settings.save">Salva</button>
                 </div>
             </div>
