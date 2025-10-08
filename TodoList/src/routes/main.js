@@ -2,6 +2,7 @@ import { aggiungiNota_run, LoadFromLocalStorage, creaCard } from './code/aggiung
 import { inizializzaConfig } from './code/salva_configurazione.js';
 import { ricercaNote_run } from './code/ricerca_note.js';
 import { gestioneCard_run } from './code/gestione_card.js';
+import { carica_lingua } from './code/carica_lingua.js';
 
 // Sistema di routing SPA
 class Router {
@@ -285,6 +286,15 @@ function initHomePage() {
 
 // Inizializzazione al caricamento della pagina
 document.addEventListener('DOMContentLoaded', async function() {
+    // Setta italiano come lingua di default se non è già impostata
+    if (!localStorage.getItem('lingua')) {
+        localStorage.setItem('lingua', 'it');
+    }
+
+    // Carica la lingua salvata all'avvio
+    const linguaSalvata = localStorage.getItem('lingua') || 'it';
+    await carica_lingua(linguaSalvata);
+
     // Carica e applica configurazione all'avvio
     await inizializzaConfig();
 
