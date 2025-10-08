@@ -30,7 +30,11 @@
                         </label>
                     </div>
                     <div class="form-control mt-6">
-                        <button class="btn btn-primary">Login</button>
+                        <button class="btn btn-primary" id="btn_login">Login</button>
+                    </div>
+                    <!-- Alert per errori/successi -->
+                    <div id="auth-alert" class="alert mt-4" style="display: none;">
+                        <span id="auth-alert-text"></span>
                     </div>
                 </div>
 
@@ -40,22 +44,22 @@
                         <label class="label">
                             <span class="label-text">Nome</span>
                         </label>
-                        <input type="text" placeholder="nome" class="input input-bordered" required />
+                        <input type="text" placeholder="nome" class="input input-bordered" id="register_name" required />
                     </div>
                     <div class="form-control">
                         <label class="label">
                             <span class="label-text">Email</span>
                         </label>
-                        <input type="email" placeholder="email" class="input input-bordered" required />
+                        <input type="email" placeholder="email" class="input input-bordered" id="register_email" required />
                     </div>
                     <div class="form-control">
                         <label class="label">
                             <span class="label-text">Password</span>
                         </label>
-                        <input type="password" placeholder="password" class="input input-bordered" required />
+                        <input type="password" placeholder="password" class="input input-bordered" id="register_password" required />
                     </div>
                     <div class="form-control mt-6">
-                        <button class="btn btn-primary">Registrati</button>
+                        <button class="btn btn-primary" id="btn_register">Registrati</button>
                     </div>
                 </div>
             </div>
