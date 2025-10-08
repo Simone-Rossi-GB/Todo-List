@@ -125,6 +125,20 @@ function mostraMenuSposta(card) {
             const target = btn.getAttribute('data-target');
             spostaCard(card, target);
             overlay.remove();
+
+            // Aggiorna il localStorage
+            const titolo = card.querySelector('.card-title').textContent
+            const descrizione = card.querySelector('p').textContent
+            const items = LoadFromLocalStorage(colonnaCorrenteId + '_notes')
+            const index = items.findIndex(item => item.title === titolo && item.description === descrizione)
+            if (index !== -1) {
+                items.splice(index, 1);
+                SaveToLocalStorage(colonnaCorrenteId + '_notes', items)
+            }
+
+            const items2 = LoadFromLocalStorage(target + '_notes')
+            items2.push({ title: titolo, description: descrizione })
+            SaveToLocalStorage(target + '_notes', items2)
         });
     });
 
@@ -217,13 +231,4 @@ export const LoadFromLocalStorage = (key) => {
 export const SaveToLocalStorage = (key, content) => {
     const jsonData = JSON.stringify(content)
     localStorage.setItem(key, jsonData)
-}
-
-const RefreshView = (list, items) => {
-    list.innerHTML = ''
-
-    items.forEach((item) => {
-        const card = CreaCard(item.title, item.description)
-        list.appendChild(card)
-    })
 }
