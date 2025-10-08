@@ -1,9 +1,13 @@
-import i18next from 'i18next';
-import it from './locales/it.js';
-import en from './locales/en.js';
+import it from '../locales/it.js';
+import en from '../locales/en.js';
+
+// Mappa delle traduzioni disponibili
+const translations = {
+    'it': it,
+    'en': en
+};
 
 // funzione che carica la lingua selezionata dal bundle associato
-
 export const caricaLingua_run = () => {
     const form_lingua = document.getElementById('form_lingua');
     const lingua_selezionata = form_lingua.value;
@@ -11,8 +15,15 @@ export const caricaLingua_run = () => {
     carica_lingua(lingua_selezionata);
 }
 
+// Funzione helper per ottenere una traduzione specifica
+export function getTraduzione(key) {
+    const lingua = window.appConfig?.lingua || 'it';
+    const transalations = translations[lingua] || translations['it'];
+    return getNestedValue(transalations, key) || key;
+}
+
 export async function carica_lingua(lingua) {
-    const transalations = await fetch(`/src/locales/${lingua}.json`).then(r => r.json());
+    const transalations = translations[lingua] || translations['it'];
 
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n')
@@ -33,8 +44,6 @@ export async function carica_lingua(lingua) {
             console.log(key + " (placeholder) non trovata nel " + lingua + ".json");
         }
     });
-
-    localStorage.setItem('lingua', lingua);
 }
 
 function getNestedValue(obj, path) {

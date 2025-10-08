@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "TodoList"
+  },
+  "nav": {
+    "home": "Home",
+    "backlog": "Backlog",
+    "in_progress": "In Progress",
+    "review": "Review",
+    "done": "Done",
+    "profile": "Profilo",
+    "settings": "Impostazioni"
+  },
+  "profile": {
+    "title": "Profilo Utente",
+    "username": "Nome Utente",
+    "email": "Email",
+    "oldPassword": "Vecchia Password",
+    "newPassword": "Nuova Password",
+    "saveChanges": "Salva Modifiche"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "appPreferences": "Preferenze Applicazione",
+    "profileSection": "Profilo",
+    "profilePicture": "Foto Profilo",
+    "appearanceSection": "Aspetto",
+    "darkTheme": "Tema Scuro",
+    "autoScroll": "Auto-scroll Colonne",
+    "languageSection": "Lingua",
+    "selectLanguage": "Seleziona Lingua",
+    "save": "Salva",
+    "successMessage": "Impostazioni salvate con successo!",
+    "errorMessage": "Errore durante il salvataggio"
+  },
+  "placeholders": {
+    "name": "Nome",
+    "password": "Password",
+    "email": "Email"
+  },
+  "languages": {
+    "it": "Italiano",
+    "en": "English"
+  }
+}

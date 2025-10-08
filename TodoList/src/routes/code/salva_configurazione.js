@@ -132,6 +132,12 @@ async function applicaConfig(config) {
         navbarAvatar.src = fotoProfilo;
     }
 
+    // Applica lingua
+    if (window.carica_lingua) {
+        await window.carica_lingua(config.lingua);
+        console.log('lingua in caricamento: ' + config.lingua);
+    }
+
     console.log('Configurazione applicata:', config);
 }
 

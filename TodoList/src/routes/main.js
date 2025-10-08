@@ -4,6 +4,9 @@ import { ricercaNote_run } from './code/ricerca_note.js';
 import { gestioneCard_run } from './code/gestione_card.js';
 import { carica_lingua } from './code/carica_lingua.js';
 
+// Rendi carica_lingua disponibile globalmente
+window.carica_lingua = carica_lingua;
+
 // Sistema di routing SPA
 class Router {
     constructor() {
@@ -78,6 +81,10 @@ async function loadRoute(routeName) {
 
         // Sostituisci direttamente il contenuto
         appContent.innerHTML = html;
+
+        // Applica traduzioni alla nuova route
+        const currentLang = window.appConfig?.lingua || 'it';
+        await carica_lingua(currentLang);
 
         // Carica CSS della route se esiste
         const existingRouteStyle = document.querySelector('#route-styles');
@@ -286,17 +293,11 @@ function initHomePage() {
 
 // Inizializzazione al caricamento della pagina
 document.addEventListener('DOMContentLoaded', async function() {
-    // Setta italiano come lingua di default se non è già impostata
-    if (!localStorage.getItem('lingua')) {
-        localStorage.setItem('lingua', 'it');
-    }
-
-    // Carica la lingua salvata all'avvio
-    const linguaSalvata = localStorage.getItem('lingua') || 'it';
-    await carica_lingua(linguaSalvata);
-
     // Carica e applica configurazione all'avvio
-    await inizializzaConfig();
+    const config = await inizializzaConfig();
+
+    // Carica la lingua dalla configurazione
+    await carica_lingua(config.lingua);
 
     // Salva il contenuto originale della home
     originalHomeContent = document.getElementById('app-content').innerHTML;
@@ -307,11 +308,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Definisci le route
     router.addRoute('/', async () => {
         // Ricarica configurazione
-        await inizializzaConfig();
+        const config = await inizializzaConfig();
 
         // Route home - ripristina contenuto originale
         const appContent = document.getElementById('app-content');
         appContent.innerHTML = originalHomeContent;
+
+        // Applica traduzioni
+        await carica_lingua(config.lingua);
 
         // Reinizializza la home page
         initHomePage();

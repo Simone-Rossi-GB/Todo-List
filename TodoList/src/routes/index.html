@@ -57,7 +57,7 @@
                         <path d="m21 21-4.3-4.3"></path>
                     </g>
                 </svg>
-                <input type="search" required placeholder="Cerca note..." id="input-ricerca" />
+                <input type="search" required placeholder="Cerca note..." id="input-ricerca" data-i18n-placeholder="home.searchPlaceholder" />
             </label>
 
             <!-- Navbar profilo utente -->
@@ -74,7 +74,7 @@
                         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1000] mt-3 w-52 p-2 shadow">
                         <li><a href="#/profile" data-i18n="nav.profile">Profile</a></li>
                         <li><a href="#/settings" data-i18n="nav.settings">Settings</a></li>
-                        <li><a href="#/auth">Logout</a></li>
+                        <li><a href="#/auth" data-i18n="nav.logout">Logout</a></li>
                     </ul>
                 </div>
             </div>
@@ -87,26 +87,26 @@
             style="min-height: auto">
             <div class="flex space-x-2 items-center">
                 <input type="text" placeholder="Titolo nota..."
-                    class="input input-bordered w-64" id="input-titolo"/>
+                    class="input input-bordered w-64" id="input-titolo" data-i18n-placeholder="home.titlePlaceholder"/>
 
                 <input type="text" placeholder="Descrizione..."
-                    class="input input-bordered flex-1" id="input-descrizione"/>
+                    class="input input-bordered flex-1" id="input-descrizione" data-i18n-placeholder="home.descriptionPlaceholder"/>
 
                 <div class="dropdown dropdown-end" id="filtro-stato">
                     <div tabindex="0" role="button"
-                        class="btn btn-outline" id="label-stato">Stato ▼</div>
+                        class="btn btn-outline" id="label-stato" data-i18n="home.statusLabel">Stato ▼</div>
                     <ul tabindex="0"
                         class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
-                        <button class="btn btn-sm btn-ghost" id="button-backlog">Backlog</button>
-                        <button class="btn btn-sm btn-ghost" id="button-inProgress">In Progress</button>
-                        <button class="btn btn-sm btn-ghost" id="button-review">Review</button>
-                        <button class="btn btn-sm btn-ghost" id="button-done">Done</button>
+                        <button class="btn btn-sm btn-ghost" id="button-backlog" data-i18n="status.backlog">Backlog</button>
+                        <button class="btn btn-sm btn-ghost" id="button-inProgress" data-i18n="status.inProgress">In Progress</button>
+                        <button class="btn btn-sm btn-ghost" id="button-review" data-i18n="status.review">Review</button>
+                        <button class="btn btn-sm btn-ghost" id="button-done" data-i18n="status.done">Done</button>
                     </ul>
                 </div>
 
                 <div>
                     <button tabindex="0" role="button"
-                        class="btn btn-primary" id="bottone-aggiungi">Aggiungi</button>
+                        class="btn btn-primary" id="bottone-aggiungi" data-i18n="home.addButton">Aggiungi</button>
                 </div>
 
             </div>
@@ -116,7 +116,7 @@
 
         <div class="todo-div elemento-centrato">
             <div id="backlog" class="todo-list">
-                <div class="div-title">Backlog</div>
+                <div class="div-title" data-i18n="status.backlog">Backlog</div>
                 <div class="todo-list-content" id="backlog-note">
                     <div class="card w-full bg-base-100 card-lg shadow-sm">
                         <div class="card-body">
@@ -199,7 +199,7 @@
             </div>
 
             <div id="in_progress" class="todo-list">
-                <div class="div-title">In Progress</div>
+                <div class="div-title" data-i18n="status.inProgress">In Progress</div>
                 <div class="todo-list-content">
                     <div class="card w-full bg-base-100 card-lg shadow-sm">
                         <div class="card-body">
@@ -265,7 +265,7 @@
             </div>
 
             <div id="review" class="todo-list">
-                <div class="div-title">Review</div>
+                <div class="div-title" data-i18n="status.review">Review</div>
                 <div class="todo-list-content">
                     <div class="card w-full bg-base-100 card-lg shadow-sm">
                         <div class="card-body">
@@ -317,7 +317,7 @@
             </div>
 
             <div id="done" class="todo-list">
-                <div class="div-title">Done</div>
+                <div class="div-title" data-i18n="status.done">Done</div>
                 <div class="todo-list-content">
                     <div class="card w-full bg-base-100 card-lg shadow-sm">
                         <div class="card-body">

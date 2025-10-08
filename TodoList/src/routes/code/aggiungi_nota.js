@@ -1,3 +1,5 @@
+import { getTraduzione } from './carica_lingua.js';
+
 export const aggiungiNota_run = () =>  {
     console.log('aggiungiNota_run eseguito');
 
@@ -23,25 +25,25 @@ export const aggiungiNota_run = () =>  {
 
     newBacklog.addEventListener('click', () => {
         stato = 'backlog'
-        labelStato.textContent = 'Stato: Backlog ▼'
+        labelStato.textContent = getTraduzione('home.statusLabel') + ': ' + getTraduzione('status.backlog') + ' ▼'
         document.activeElement.blur()
     })
 
     newInProgress.addEventListener('click', () => {
         stato = 'in_progress'
-        labelStato.textContent = 'Stato: In Progress ▼'
+        labelStato.textContent = getTraduzione('home.statusLabel') + ': ' + getTraduzione('status.inProgress') + ' ▼'
         document.activeElement.blur()
     })
 
     newReview.addEventListener('click', () => {
         stato = 'review'
-        labelStato.textContent = 'Stato: Review ▼'
+        labelStato.textContent = getTraduzione('home.statusLabel') + ': ' + getTraduzione('status.review') + ' ▼'
         document.activeElement.blur()
     })
 
     newDone.addEventListener('click', () => {
         stato = 'done'
-        labelStato.textContent = 'Stato: Done ▼'
+        labelStato.textContent = getTraduzione('home.statusLabel') + ': ' + getTraduzione('status.done') + ' ▼'
         document.activeElement.blur()
     })
 
@@ -52,7 +54,7 @@ export const aggiungiNota_run = () =>  {
 
     newInputAggiunta.addEventListener('click', () => {
         if (stato === null) {
-            alert('Seleziona uno stato per la nota')
+            alert(getTraduzione('home.selectStatus'))
             return
         }
 
@@ -60,12 +62,12 @@ export const aggiungiNota_run = () =>  {
         const inputDescrizione = document.getElementById('input-descrizione').value
 
         if (!inputTitolo.trim()) {
-            alert('Inserisci un titolo per la nota')
+            alert(getTraduzione('home.enterTitle'))
             return
         }
 
         if (!inputDescrizione.trim()) {
-            alert('Inserisci una descrizione per la nota')
+            alert(getTraduzione('home.enterDescription'))
             return
         }
 
@@ -105,13 +107,13 @@ function mostraMenuSposta(card) {
     menu.style.cssText = 'width: 300px; padding: 20px;';
 
     menu.innerHTML = `
-        <h3 class="text-lg font-bold mb-4">Sposta nota in:</h3>
+        <h3 class="text-lg font-bold mb-4">${getTraduzione('home.moveNoteTo')}</h3>
         <div class="flex flex-col gap-2">
-            ${colonnaCorrenteId !== 'backlog' ? '<button class="btn btn-outline" data-target="backlog">Backlog</button>' : ''}
-            ${colonnaCorrenteId !== 'in_progress' ? '<button class="btn btn-outline" data-target="in_progress">In Progress</button>' : ''}
-            ${colonnaCorrenteId !== 'review' ? '<button class="btn btn-outline" data-target="review">Review</button>' : ''}
-            ${colonnaCorrenteId !== 'done' ? '<button class="btn btn-outline" data-target="done">Done</button>' : ''}
-            <button class="btn btn-ghost mt-2" id="btn-annulla-sposta">Annulla</button>
+            ${colonnaCorrenteId !== 'backlog' ? `<button class="btn btn-outline" data-target="backlog">${getTraduzione('status.backlog')}</button>` : ''}
+            ${colonnaCorrenteId !== 'in_progress' ? `<button class="btn btn-outline" data-target="in_progress">${getTraduzione('status.inProgress')}</button>` : ''}
+            ${colonnaCorrenteId !== 'review' ? `<button class="btn btn-outline" data-target="review">${getTraduzione('status.review')}</button>` : ''}
+            ${colonnaCorrenteId !== 'done' ? `<button class="btn btn-outline" data-target="done">${getTraduzione('status.done')}</button>` : ''}
+            <button class="btn btn-ghost mt-2" id="btn-annulla-sposta">${getTraduzione('home.cancel')}</button>
         </div>
     `;
 
@@ -184,17 +186,17 @@ export const creaCard = (titolo, descrizione, stato) => {
 
         const btnSposta = document.createElement('button')
         btnSposta.className = 'btn btn-info btn-outline btn-sm btn-sposta'
-        btnSposta.textContent = 'Sposta'
+        btnSposta.textContent = getTraduzione('home.moveButton')
 
         const btnElimina = document.createElement('button')
         btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
-        btnElimina.textContent = 'Elimina'
+        btnElimina.textContent = getTraduzione('home.deleteButton')
 
         console.log(stato);
 
         // Event listener per eliminare
         btnElimina.addEventListener('click', () => {
-            if (confirm('Sei sicuro di voler eliminare questa nota?')) {
+            if (confirm(getTraduzione('home.confirmDelete'))) {
                 card.remove();
 
                 // Rimuovi dal localStorage
