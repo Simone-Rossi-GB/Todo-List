@@ -1,11 +1,13 @@
-import { aggiungiNota_run, LoadFromLocalStorage, creaCard } from './code/aggiungi_nota.js';
+import { aggiungiNota_run, LoadFromLocalStorage, creaCard, SaveToLocalStorage } from './code/aggiungi_nota.js';
 import { inizializzaConfig } from './code/salva_configurazione.js';
 import { ricercaNote_run } from './code/ricerca_note.js';
 import { gestioneCard_run } from './code/gestione_card.js';
 import { carica_lingua } from './code/carica_lingua.js';
 
-// Rendi carica_lingua disponibile globalmente
+// Rendi funzioni disponibili globalmente
 window.carica_lingua = carica_lingua;
+window.LoadFromLocalStorage = LoadFromLocalStorage;
+window.SaveToLocalStorage = SaveToLocalStorage;
 
 // Sistema di routing SPA
 class Router {
@@ -376,3 +378,6 @@ export const loadNotesFromLocalStorage = (key, section) => {
         listaDoveAggiungere.appendChild(card);
     })
 }
+
+// Rendi disponibile globalmente DOPO la definizione
+window.loadNotesFromLocalStorage = loadNotesFromLocalStorage;

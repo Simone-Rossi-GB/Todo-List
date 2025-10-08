@@ -95,9 +95,10 @@ export const aggiungiNota_run = () =>  {
 
 // Funzione per mostrare menu di spostamento
 function mostraMenuSposta(card) {
-    // Trova la colonna corrente
-    const colonnaCorrente = card.closest('.todo-list');
+    // Trova la colonna corrente (sia nelle pagine home che singole)
+    const colonnaCorrente = card.closest('.todo-list, .todo-list-single');
     const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : '';
+    console.log('mostraMenuSposta - Colonna trovata:', colonnaCorrente, 'ID:', colonnaCorrenteId);
 
     // Crea un overlay con menu
     const overlay = document.createElement('div');
@@ -126,25 +127,29 @@ function mostraMenuSposta(card) {
     bottoni.forEach(btn => {
         btn.addEventListener('click', () => {
             const target = btn.getAttribute('data-target');
-            spostaCard(card, target);
-            overlay.remove();
 
-            // Aggiorna il localStorage
+            // PRIMA: Leggi titolo e descrizione dalla card (prima di spostarla/rimuoverla!)
             const titolo = card.querySelector('.card-title').textContent
             const descrizione = card.querySelector('p').textContent
-            const items = LoadFromLocalStorage(colonnaCorrenteId + '_notes')
+
+            // POI: Aggiorna il localStorage
+            const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes')
             const index = items.findIndex(item => item.title === titolo && item.description === descrizione)
             console.log('Spostamento - Colonna origine:', colonnaCorrenteId, 'Items trovati:', items, 'Index:', index)
             if (index !== -1) {
                 items.splice(index, 1);
-                SaveToLocalStorage(colonnaCorrenteId + '_notes', items)
+                window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items)
                 console.log('Rimosso da', colonnaCorrenteId + '_notes', items)
             }
 
-            const items2 = LoadFromLocalStorage(target + '_notes')
+            const items2 = window.LoadFromLocalStorage(target + '_notes')
             items2.push({ title: titolo, description: descrizione })
-            SaveToLocalStorage(target + '_notes', items2)
+            window.SaveToLocalStorage(target + '_notes', items2)
             console.log('Aggiunto a', target + '_notes', items2)
+
+            // INFINE: Sposta/rimuovi la card dal DOM
+            spostaCard(card, target);
+            overlay.remove();
         });
     });
 
@@ -163,6 +168,15 @@ function mostraMenuSposta(card) {
 
 function spostaCard(card, targetId) {
     const targetColonna = document.getElementById(targetId);
+
+    // Se la colonna target non esiste (es. siamo in una pagina singola)
+    if (!targetColonna) {
+        // Rimuovi semplicemente la card dal DOM (localStorage già aggiornato)
+        card.remove();
+        console.log('Nota spostata verso', targetId, '(colonna non presente nella vista corrente)');
+        return;
+    }
+
     const targetContent = targetColonna.querySelector('.todo-list-content');
 
     // Sposta la card
@@ -203,19 +217,19 @@ export const creaCard = (titolo, descrizione, stato) => {
         // Event listener per eliminare
         btnElimina.addEventListener('click', () => {
             if (confirm(getTraduzione('home.confirmDelete'))) {
-                // Determina la colonna corrente dal DOM
-                const colonnaCorrente = card.closest('.todo-list');
+                // Determina la colonna corrente dal DOM (sia home che pagine singole)
+                const colonnaCorrente = card.closest('.todo-list, .todo-list-single');
                 const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
 
                 card.remove();
 
-                // Rimuovi dal localStorage
-                const items = LoadFromLocalStorage(colonnaCorrenteId + '_notes');
+                // Rimuovi dal localStorage (usa sempre funzioni globali negli event listener)
+                const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes');
                 const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
                 console.log('Eliminazione - Colonna:', colonnaCorrenteId, 'Items:', items, 'Index:', index)
                 if (index !== -1) {
                     items.splice(index, 1);
-                    SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
+                    window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
                     console.log('Eliminato da localStorage:', colonnaCorrenteId + '_notes', items)
                 }
             }

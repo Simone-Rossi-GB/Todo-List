@@ -1,4 +1,3 @@
 // JavaScript specifico per Backlog
-import {loadNotesFromLocalStorage} from './main.js'
-
-loadNotesFromLocalStorage('backlog_notes', 'backlog')
+// Usa la funzione globale invece di import (che viene rimosso dal router)
+window.loadNotesFromLocalStorage('backlog_notes', 'backlog')

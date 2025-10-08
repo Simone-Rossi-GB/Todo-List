@@ -1,4 +1,3 @@
 // JavaScript specifico per Review
-import {loadNotesFromLocalStorage} from './main.js'
-
-loadNotesFromLocalStorage('review_notes', 'review')
+// Usa la funzione globale invece di import (che viene rimosso dal router)
+window.loadNotesFromLocalStorage('review_notes', 'review')

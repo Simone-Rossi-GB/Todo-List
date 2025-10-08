@@ -1,4 +1,3 @@
 // JavaScript specifico per Done
-import {loadNotesFromLocalStorage} from './main.js'
-
-loadNotesFromLocalStorage('done_notes', 'done')
+// Usa la funzione globale invece di import (che viene rimosso dal router)
+window.loadNotesFromLocalStorage('done_notes', 'done')

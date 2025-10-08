@@ -1,4 +1,3 @@
 // JavaScript specifico per In Progress
-import {loadNotesFromLocalStorage} from './main.js'
-
-loadNotesFromLocalStorage('in_progress_notes', 'in_progress')
+// Usa la funzione globale invece di import (che viene rimosso dal router)
+window.loadNotesFromLocalStorage('in_progress_notes', 'in_progress')
