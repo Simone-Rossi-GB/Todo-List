@@ -1,4 +1,4 @@
 // JavaScript specifico per Backlog
-import {loadNotesFromLocalStorage} from '../code/main.js'
+import {loadNotesFromLocalStorage} from './main.js'
 
 loadNotesFromLocalStorage('backlog_notes', 'backlog')
