@@ -74,7 +74,7 @@ export const aggiungiNota_run = () =>  {
         const listaDoveAggiungere = colonnaStato.querySelector('.todo-list-content')
 
         // Crea la card
-        const card = creaCard(inputTitolo, inputDescrizione)
+        const card = creaCard(inputTitolo, inputDescrizione, stato)
 
         // Aggiungi la card al contenitore
         listaDoveAggiungere.appendChild(card)
@@ -149,7 +149,7 @@ function spostaCard(card, targetId) {
     targetContent.appendChild(card);
 }
 
-export const creaCard = (titolo, descrizione) => {
+export const creaCard = (titolo, descrizione, stato) => {
         // Crea l'elemento card
         const card = document.createElement('div')
         card.className = 'card w-full bg-base-100 card-lg shadow-sm'
@@ -176,10 +176,20 @@ export const creaCard = (titolo, descrizione) => {
         btnElimina.className = 'btn btn-error btn-outline btn-sm btn-elimina'
         btnElimina.textContent = 'Elimina'
 
+        console.log(stato);
+
         // Event listener per eliminare
         btnElimina.addEventListener('click', () => {
             if (confirm('Sei sicuro di voler eliminare questa nota?')) {
                 card.remove();
+
+                // Rimuovi dal localStorage
+                const items = LoadFromLocalStorage(stato + '_notes');
+                const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
+                if (index !== -1) {
+                    items.splice(index, 1);
+                    SaveToLocalStorage(stato + '_notes', items);
+                }
             }
         });
 
@@ -204,7 +214,7 @@ export const LoadFromLocalStorage = (key) => {
     return JSON.parse(localStorage.getItem(key)) || [];
 }
 
-const SaveToLocalStorage = (key, content) => {
+export const SaveToLocalStorage = (key, content) => {
     const jsonData = JSON.stringify(content)
     localStorage.setItem(key, jsonData)
 }

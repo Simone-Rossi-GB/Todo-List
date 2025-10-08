@@ -1,3 +1,5 @@
+import { LoadFromLocalStorage, SaveToLocalStorage } from "./aggiungi_nota.js";
+
 // Funzione per mostrare menu di spostamento
 function mostraMenuSposta(card) {
     // Trova la colonna corrente
@@ -67,6 +69,11 @@ export const gestioneCard_run = () => {
         const btnElimina = card.querySelector('.btn-error');
         const btnSposta = card.querySelector('.btn-info');
 
+        const colonna = card.closest('.todo-list');
+        const stato = colonna.id;
+        const titolo = card.querySelector('.card-title').textContent;
+        const descrizione = card.querySelector('p').textContent;
+
         if (btnElimina) {
             // Rimuovi listener precedenti clonando
             const newBtnElimina = btnElimina.cloneNode(true);
@@ -76,6 +83,14 @@ export const gestioneCard_run = () => {
             newBtnElimina.addEventListener('click', () => {
                 if (confirm('Sei sicuro di voler eliminare questa nota?')) {
                     card.remove();
+
+                    // Rimuovi dal localStorage
+                    const items = LoadFromLocalStorage(stato + '_notes');
+                    const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
+                    if (index !== -1) {
+                        items.splice(index, 1);
+                        SaveToLocalStorage(stato + '_notes', items);
+                    }
                 }
             });
         }
