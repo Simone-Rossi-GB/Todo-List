@@ -400,7 +400,7 @@ Todo-List/
 │   │   │   ├── styles.css            # Stili globali
 │   │   │   ├── auth/
 │   │   │   │   ├── auth.html         # UI login/register
-│   │   │   │   └── auth.js           # Logica autenticazione
+│   │   │   │   └── home.js           # Logica autenticazione
 │   │   │   ├── code/
 │   │   │   │   ├── aggiungi_nota.js  # CRUD note (con Supabase)
 │   │   │   │   ├── supabase_helper.js # Helper API Supabase
@@ -461,7 +461,7 @@ Todo-List/
 - Gestione token
 - Funzioni: getToken, loadNotesFromSupabase, createNoteOnSupabase, deleteNoteFromSupabase, moveNoteOnSupabase
 
-**`src/routes/auth/auth.js`** (152 righe)
+**`src/routes/auth/home.js`** (152 righe)
 - UI login/registrazione
 - Chiamate a comandi Rust
 - Sincronizzazione localStorage al login

@@ -42,8 +42,8 @@ if (!noteData) {
     // Gestione bottone Elimina
     const btnDelete = document.getElementById('btn-delete-note');
     if (btnDelete) {
-        btnDelete.addEventListener('click', () => {
-            if (confirm(`Sei sicuro di voler eliminare la nota "${noteData.title}"?`)) {
+        btnDelete.addEventListener('click', async () => {
+            if (await window.showConfirm(`Sei sicuro di voler eliminare la nota "${noteData.title}"?`, 'Conferma Eliminazione')) {
                 // Carica le note dal localStorage
                 const storageKey = noteData.status + '_notes';
                 const notes = JSON.parse(localStorage.getItem(storageKey) || '[]');
@@ -69,9 +69,9 @@ if (!noteData) {
     // Gestione bottone Modifica
     const btnEdit = document.getElementById('btn-edit-note');
     if (btnEdit) {
-        btnEdit.addEventListener('click', () => {
+        btnEdit.addEventListener('click', async () => {
             // TODO: Implementare la modalità di modifica
-            alert('Funzionalità di modifica in arrivo!');
+            await window.showMessage('Funzionalità di modifica in arrivo!', 'Info', 'info');
         });
     }
 }

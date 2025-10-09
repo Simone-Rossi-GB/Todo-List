@@ -21,7 +21,7 @@ async function salvaConfig(config) {
         return true;
     } catch (error) {
         console.error('Errore nel salvataggio:', error);
-        alert('Errore nel salvataggio della configurazione: ' + error.message);
+        await window.showMessage('Errore nel salvataggio della configurazione: ' + error.message, 'Errore', 'error');
         return false;
     }
 }
@@ -261,7 +261,7 @@ export const salvaConfigurazione_run = async () => {
                 (await import('../code/carica_lingua.js')).getTraduzione('settings.confirmReset') :
                 'Sei sicuro di voler cancellare tutte le note? Questa azione è irreversibile!';
 
-            if (confirm(confirmMsg)) {
+            if (await window.showConfirm(confirmMsg, 'Conferma Reset')) {
                 // Cancella tutte le note dal localStorage
                 localStorage.removeItem('backlog_notes');
                 localStorage.removeItem('in_progress_notes');

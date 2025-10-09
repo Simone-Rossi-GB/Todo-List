@@ -102,8 +102,8 @@ function mostraDettagliCard(titolo, descrizione, stato) {
     });
 
     // Bottone Elimina
-    dettagli.querySelector('#btn-elimina-nota').addEventListener('click', () => {
-        if (confirm(`Sei sicuro di voler eliminare la nota "${titolo}"?`)) {
+    dettagli.querySelector('#btn-elimina-nota').addEventListener('click', async () => {
+        if (await window.showConfirm(`Sei sicuro di voler eliminare la nota "${titolo}"?`, 'Conferma Eliminazione')) {
             // Trova la card nel DOM
             const cards = document.querySelectorAll('.todo-list-content .card');
             let cardToRemove = null;
@@ -133,8 +133,8 @@ function mostraDettagliCard(titolo, descrizione, stato) {
     });
 
     // Bottone Modifica (placeholder)
-    dettagli.querySelector('#btn-modifica-nota').addEventListener('click', () => {
-        alert('Funzionalità di modifica in arrivo!');
+    dettagli.querySelector('#btn-modifica-nota').addEventListener('click', async () => {
+        await window.showMessage('Funzionalità di modifica in arrivo!', 'Info', 'info');
     });
 
     // Chiudi quando si clicca fuori
@@ -166,8 +166,8 @@ export const gestioneCard_run = () => {
             btnElimina.parentNode.replaceChild(newBtnElimina, btnElimina);
 
             // Aggiungi listener
-            newBtnElimina.addEventListener('click', () => {
-                if (confirm('Sei sicuro di voler eliminare questa nota?')) {
+            newBtnElimina.addEventListener('click', async () => {
+                if (await window.showConfirm('Sei sicuro di voler eliminare questa nota?', 'Conferma Eliminazione')) {
                     card.remove();
 
                     // Rimuovi dal localStorage

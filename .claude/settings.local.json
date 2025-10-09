@@ -4,7 +4,10 @@
       "Bash(dir /b srcroutes)",
       "Bash(npm run tauri:*)",
       "Bash(npm run tauri:dev:*)",
-      "Bash(cargo:*)"
+      "Bash(cargo:*)",
+      "Bash(dir:*)",
+      "Bash(npm run tauri:build:*)",
+      "Bash(taskkill:*)"
     ],
     "deny": [],
     "ask": []

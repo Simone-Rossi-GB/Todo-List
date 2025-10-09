@@ -55,7 +55,7 @@ export const aggiungiNota_run = () =>  {
 
     newInputAggiunta.addEventListener('click', async () => {
         if (stato === null) {
-            alert(getTraduzione('home.selectStatus'))
+            await window.showMessage(getTraduzione('home.selectStatus'), 'Attenzione', 'warning')
             return
         }
 
@@ -63,12 +63,12 @@ export const aggiungiNota_run = () =>  {
         const inputDescrizione = document.getElementById('input-descrizione').value
 
         if (!inputTitolo.trim()) {
-            alert(getTraduzione('home.enterTitle'))
+            await window.showMessage(getTraduzione('home.enterTitle'), 'Attenzione', 'warning')
             return
         }
 
         if (!inputDescrizione.trim()) {
-            alert(getTraduzione('home.enterDescription'))
+            await window.showMessage(getTraduzione('home.enterDescription'), 'Attenzione', 'warning')
             return
         }
 
@@ -99,7 +99,7 @@ export const aggiungiNota_run = () =>  {
             document.getElementById('input-descrizione').value = ''
         } catch (error) {
             console.error('Errore durante il salvataggio della nota:', error);
-            alert('Errore durante il salvataggio della nota: ' + error);
+            await window.showMessage('Errore durante il salvataggio della nota: ' + error, 'Errore', 'error');
         }
     })
 }
@@ -151,7 +151,7 @@ function mostraMenuSposta(card) {
                     console.log('Nota spostata su Supabase');
                 } catch (error) {
                     console.error('Errore spostamento su Supabase:', error);
-                    alert('Errore durante lo spostamento: ' + error);
+                    await window.showMessage('Errore durante lo spostamento: ' + error, 'Errore', 'error');
                     return;
                 }
             }
@@ -240,7 +240,7 @@ export const creaCard = (titolo, descrizione, stato, noteId = null) => {
 
         // Event listener per eliminare
         btnElimina.addEventListener('click', async () => {
-            if (confirm(getTraduzione('home.confirmDelete'))) {
+            if (await window.showConfirm(getTraduzione('home.confirmDelete'), 'Conferma Eliminazione')) {
                 // Determina la colonna corrente dal DOM (sia home che pagine singole)
                 const colonnaCorrente = card.closest('.todo-list, .todo-list-single');
                 const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
@@ -254,7 +254,7 @@ export const creaCard = (titolo, descrizione, stato, noteId = null) => {
                         console.log('Nota eliminata da Supabase');
                     } catch (error) {
                         console.error('Errore eliminazione da Supabase:', error);
-                        alert('Errore durante l\'eliminazione: ' + error);
+                        await window.showMessage('Errore durante l\'eliminazione: ' + error, 'Errore', 'error');
                         return;
                     }
                 }
@@ -366,7 +366,7 @@ function mostraDettagliNota(titolo, descrizione, stato) {
 
     // Bottone Elimina
     dettagli.querySelector('#btn-elimina-nota').addEventListener('click', async () => {
-        if (confirm(getTraduzione('home.confirmDelete'))) {
+        if (await window.showConfirm(getTraduzione('home.confirmDelete'), 'Conferma Eliminazione')) {
             // Trova la card nel DOM
             const cards = document.querySelectorAll('.todo-list-content .card, .todo-list-single .card');
             let cardToRemove = null;
@@ -389,7 +389,7 @@ function mostraDettagliNota(titolo, descrizione, stato) {
                         console.log('Nota eliminata da Supabase');
                     } catch (error) {
                         console.error('Errore eliminazione da Supabase:', error);
-                        alert('Errore durante l\'eliminazione: ' + error);
+                        await window.showMessage('Errore durante l\'eliminazione: ' + error, 'Errore', 'error');
                         return;
                     }
                 }
@@ -414,8 +414,8 @@ function mostraDettagliNota(titolo, descrizione, stato) {
     });
 
     // Bottone Modifica (placeholder)
-    dettagli.querySelector('#btn-modifica-nota').addEventListener('click', () => {
-        alert('Funzionalità di modifica in arrivo!');
+    dettagli.querySelector('#btn-modifica-nota').addEventListener('click', async () => {
+        await window.showMessage('Funzionalità di modifica in arrivo!', 'Info', 'info');
     });
 
     // Chiudi quando si clicca fuori

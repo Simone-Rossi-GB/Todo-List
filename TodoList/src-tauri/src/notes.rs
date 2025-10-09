@@ -1,8 +1,54 @@
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use base64::{Engine as _, engine::general_purpose};
 
 // URL e chiave Supabase (stessi di auth.rs)
 const SUPABASE_URL: &str = "https://zprhzalelveyqzzuazex.supabase.co";
 const SUPABASE_KEY: &str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpwcmh6YWxlbHZleXF6enVhemV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDEwODQsImV4cCI6MjA3NTQ3NzA4NH0.A7T9SLw6Myn1j3MwHAs3owpmzx_IZuYGQdFx_YuQdp4";
+
+// ==================== HELPER FUNCTIONS ====================
+
+/// Estrae lo user_id dal token JWT
+fn extract_user_id_from_token(token: &str) -> Result<String, String> {
+    // Il JWT è composto da 3 parti separate da punti: header.payload.signature
+    let parts: Vec<&str> = token.split('.').collect();
+
+    if parts.len() != 3 {
+        return Err("Token JWT malformato".to_string());
+    }
+
+    // Decodifica il payload (seconda parte) da base64
+    let payload_base64 = parts[1];
+
+    // Aggiungi padding se necessario
+    let padding = match payload_base64.len() % 4 {
+        2 => "==",
+        3 => "=",
+        _ => "",
+    };
+    let payload_base64_padded = format!("{}{}", payload_base64, padding);
+
+    // Decodifica da base64
+    let payload_bytes = general_purpose::STANDARD.decode(&payload_base64_padded)
+        .map_err(|e| format!("Errore decodifica base64: {}", e))?;
+
+    // Converti in stringa JSON
+    let payload_str = String::from_utf8(payload_bytes)
+        .map_err(|e| format!("Errore conversione UTF-8: {}", e))?;
+
+    // Parsea il JSON
+    let payload_json: Value = serde_json::from_str(&payload_str)
+        .map_err(|e| format!("Errore parsing JSON: {}", e))?;
+
+    // Estrae il campo "sub" che contiene lo user_id
+    let user_id = payload_json["sub"]
+        .as_str()
+        .ok_or("Campo 'sub' non trovato nel token")?
+        .to_string();
+
+    println!("User ID estratto dal token: {}", user_id);
+    Ok(user_id)
+}
 
 // ==================== STRUTTURE DATI ====================
 
@@ -24,6 +70,7 @@ pub struct Note {
 /// Struttura per creare una nuova nota
 #[derive(Serialize)]
 struct CreateNoteRequest {
+    user_id: String,
     title: String,
     description: String,
     status: String,
@@ -70,9 +117,13 @@ pub async fn create_note(
 ) -> Result<Note, String> {
     println!("Creazione nota: {}", title);
 
+    // Estrae lo user_id dal token
+    let user_id = extract_user_id_from_token(&token)?;
+
     let client = reqwest::Client::new();
 
     let body = CreateNoteRequest {
+        user_id,
         title,
         description,
         status,
@@ -116,9 +167,13 @@ pub async fn update_note(
 ) -> Result<Note, String> {
     println!("Aggiornamento nota: {}", note_id);
 
+    // Estrae lo user_id dal token
+    let user_id = extract_user_id_from_token(&token)?;
+
     let client = reqwest::Client::new();
 
     let body = CreateNoteRequest {
+        user_id,
         title,
         description,
         status,
