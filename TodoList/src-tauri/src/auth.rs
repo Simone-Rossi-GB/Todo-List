@@ -57,11 +57,15 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
     // Crea il client HTTP
     let client = reqwest::Client::new();
 
+    println!("client creato! creo il body della richiesta");
+
     // Prepara il body della richiesta
     let body = LoginRequest {
         email: email.clone(),
         password
     };
+
+    println!("body creato: {} - {}", body.email, body.password);
 
     // Invia POST al server
     let response = client
@@ -72,6 +76,8 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
         .send()
         .await
         .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    println!("richiesta POST inviata: {}", response.status());
 
     // Controlla lo status code
     if !response.status().is_success() {
