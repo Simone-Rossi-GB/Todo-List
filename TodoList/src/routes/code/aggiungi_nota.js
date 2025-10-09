@@ -250,8 +250,12 @@ export const creaCard = (titolo, descrizione, stato) => {
             }
             console.log('Click sulla card: ' + titolo);
 
+            // Leggi lo stato attuale dal DOM (colonna corrente)
+            const colonnaCorrente = card.closest('.todo-list, .todo-list-single');
+            const statoAttuale = colonnaCorrente ? colonnaCorrente.id : stato;
+
             // Mostra l'overlay con i dettagli della nota
-            mostraDettagliNota(titolo, descrizione, stato);
+            mostraDettagliNota(titolo, descrizione, statoAttuale);
         });
 
         // Assembla la struttura
@@ -270,30 +274,44 @@ export const creaCard = (titolo, descrizione, stato) => {
 function mostraDettagliNota(titolo, descrizione, stato) {
     // Crea un overlay con i dettagli
     const overlay = document.createElement('div');
-    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;';
 
     const dettagli = document.createElement('div');
     dettagli.className = 'card bg-base-100 shadow-xl';
-    dettagli.style.cssText = 'width: 90%; max-width: 600px; padding: 20px; max-height: 80vh; overflow-y: auto;';
+    dettagli.style.cssText = 'width: 90%; max-width: 600px; max-height: 80vh; display: flex; flex-direction: column; padding: 20px;';
 
-    // Mappa dello stato ai badge
+    // Mappa dello stato ai colori delle colonne (gradient)
     const statusMap = {
-        'backlog': { text: getTraduzione('status.backlog'), class: 'badge-primary' },
-        'in_progress': { text: getTraduzione('status.inProgress'), class: 'badge-warning' },
-        'review': { text: getTraduzione('status.review'), class: 'badge-info' },
-        'done': { text: getTraduzione('status.done'), class: 'badge-success' }
+        'backlog': {
+            text: getTraduzione('status.backlog'),
+            gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+        },
+        'in_progress': {
+            text: getTraduzione('status.inProgress'),
+            gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
+        },
+        'review': {
+            text: getTraduzione('status.review'),
+            gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+        },
+        'done': {
+            text: getTraduzione('status.done'),
+            gradient: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'
+        }
     };
 
     const statusInfo = statusMap[stato] || statusMap['backlog'];
 
     dettagli.innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">${titolo}</h2>
-        <div class="divider"></div>
-        <p class="whitespace-pre-wrap mb-4">${descrizione}</p>
-        <div class="flex gap-2 mb-4">
-            <span class="badge ${statusInfo.class}">${statusInfo.text}</span>
+        <h2 class="text-2xl font-bold mb-4" style="word-wrap: break-word; overflow-wrap: break-word;">${titolo}</h2>
+        <div class="divider" style="margin: 0.5rem 0;"></div>
+        <div style="flex: 1; overflow-y: auto; overflow-x: hidden; margin-bottom: 1rem; padding-right: 8px;">
+            <p style="white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;">${descrizione}</p>
         </div>
-        <div class="flex justify-end gap-2">
+        <div class="flex gap-2 mb-4" style="flex-shrink: 0;">
+            <span style="padding: 0.5rem 1rem; border-radius: 1rem; color: white; font-weight: 600; background: ${statusInfo.gradient}; text-shadow: 0 1px 2px rgba(0,0,0,0.2);">${statusInfo.text}</span>
+        </div>
+        <div class="flex justify-end gap-2" style="flex-shrink: 0;">
             <button class="btn btn-primary btn-sm" id="btn-modifica-nota">Modifica</button>
             <button class="btn btn-error btn-sm" id="btn-elimina-nota">${getTraduzione('home.deleteButton')}</button>
             <button class="btn btn-ghost btn-sm" id="btn-chiudi-dettagli">Chiudi</button>
