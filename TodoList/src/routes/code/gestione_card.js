@@ -59,6 +59,41 @@ function spostaCard(card, targetId) {
     targetContent.appendChild(card);
 }
 
+// Funzione per mostrare i dettagli della card
+function mostraDettagliCard(titolo, descrizione) {
+    // Crea un overlay con i dettagli
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+
+    const dettagli = document.createElement('div');
+    dettagli.className = 'card bg-base-100 shadow-xl';
+    dettagli.style.cssText = 'width: 90%; max-width: 600px; padding: 20px; max-height: 80vh; overflow-y: auto;';
+
+    dettagli.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">${titolo}</h2>
+        <div class="divider"></div>
+        <p class="whitespace-pre-wrap mb-4">${descrizione}</p>
+        <div class="flex justify-end">
+            <button class="btn btn-ghost" id="btn-chiudi-dettagli">Chiudi</button>
+        </div>
+    `;
+
+    overlay.appendChild(dettagli);
+    document.body.appendChild(overlay);
+
+    // Chiudi quando si clicca il bottone
+    dettagli.querySelector('#btn-chiudi-dettagli').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // Chiudi quando si clicca fuori
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+}
+
 export const gestioneCard_run = () => {
     console.log('gestioneCard_run eseguito');
 
@@ -105,5 +140,21 @@ export const gestioneCard_run = () => {
                 mostraMenuSposta(card);
             });
         }
+
+
+        const tmp = card.querySelector('.card-title');
+
+        const newTitle = tmp.cloneNode(true);
+        tmp.parentNode.replaceChild(newTitle, tmp);
+
+        tmp.addEventListener('dblclick', (event) => {
+            // Ignora il doppio click se viene dai bottoni
+            if (event.target.closest('.btn')) {
+                return;
+            }
+            console.log('Doppio click sulla card: ' + titolo);
+            
+        });
+
     });
 };
