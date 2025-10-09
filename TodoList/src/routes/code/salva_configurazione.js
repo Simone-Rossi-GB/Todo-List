@@ -274,11 +274,10 @@ export const salvaConfigurazione_run = async () => {
 
                 mostraAlert('success', successMsg);
 
-                // Ricarica la pagina dopo 1 secondo per mostrare le colonne vuote
+                // Torna alla home senza reload per mostrare le colonne vuote
                 setTimeout(() => {
                     window.location.hash = '/';
-                    window.location.reload();
-                }, 1000);
+                }, 500);
             }
         });
     }

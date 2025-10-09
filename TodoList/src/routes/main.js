@@ -123,7 +123,7 @@ async function loadNavbar() {
 
 // Funzione per caricare contenuto da altre route
 async function loadRoute(routeName) {
-    const appContent = document.getElementById('app-content');
+    const appContent = document.getElementById('main-app-container') || document.getElementById('app-content');
     console.log('Loading route:', routeName);
 
     try {
@@ -357,58 +357,30 @@ function initHomePage() {
     });
 }
 
-// Inizializzazione al caricamento della pagina
-document.addEventListener('DOMContentLoaded', async function() {
-    try {
-        console.log('=== AVVIO APP ===');
+// Funzione per inizializzare l'app dopo il login
+async function initializeApp() {
+    console.log('→ Utente autenticato, caricamento app...');
 
-        // Controlla se stiamo facendo un reload post-login
-        const justLoggedIn = localStorage.getItem('just_logged_in');
+    // Nascondi il form di login (NON svuotarlo!)
+    const authContainer = document.querySelector('.hero');
+    if (authContainer) {
+        authContainer.style.display = 'none';
+    }
 
-        if (justLoggedIn === 'true') {
-            // È un reload dopo login, non fare logout
-            console.log('↻ Reload post-login - mantieni sessione');
-            localStorage.removeItem('just_logged_in');
-        } else {
-            // È una nuova apertura dell'app, fai logout del token precedente
-            console.log('🔄 Nuova apertura app - cancellazione token precedente...');
-            try {
-                await window.__TAURI__.core.invoke('logout');
-                console.log('✓ Token cancellato');
-            } catch (error) {
-                console.log('✓ Nessun token da cancellare');
-            }
-        }
+    // Crea container per l'app se non esiste
+    let appContainer = document.getElementById('main-app-container');
+    if (!appContainer) {
+        appContainer = document.createElement('div');
+        appContainer.id = 'main-app-container';
+        document.getElementById('app-content').appendChild(appContainer);
+    }
+    appContainer.style.display = 'block';
 
-        // Verifica autenticazione
-        let isAuthenticated = false;
-        try {
-            const token = await window.__TAURI__.core.invoke('get_saved_token');
-            if (token && token.length > 0) {
-                isAuthenticated = true;
-                console.log('✓ UTENTE AUTENTICATO - Token trovato');
-            } else {
-                console.log('✗ Token vuoto - Login richiesto');
-            }
-        } catch (error) {
-            isAuthenticated = false;
-            console.log('✗ UTENTE NON AUTENTICATO - Login richiesto');
-        }
+    // Carica e applica configurazione all'avvio
+    const config = await inizializzaConfig();
 
-        // Se non è autenticato, inizializza solo il form di login
-        if (!isAuthenticated) {
-            console.log('→ Caricamento form di login...');
-            initAuthForm();
-            return; // Esci qui, non serve inizializzare il resto
-        }
-
-        console.log('→ Utente autenticato, caricamento app...');
-
-        // Carica e applica configurazione all'avvio (solo se autenticato)
-        const config = await inizializzaConfig();
-
-        // Carica la lingua dalla configurazione
-        await carica_lingua(config.lingua);
+    // Carica la lingua dalla configurazione
+    await carica_lingua(config.lingua);
 
         // Inizializza il router
         const router = new Router();
@@ -430,9 +402,37 @@ document.addEventListener('DOMContentLoaded', async function() {
                         const confirmed = await showConfirm('Sei sicuro di voler effettuare il logout?', 'Conferma Logout');
                         if (confirmed) {
                             try {
+                                console.log('→ Logout in corso...');
+
+                                // Cancella il token dal backend Rust
                                 await window.__TAURI__.core.invoke('logout');
-                                localStorage.clear();
-                                window.location.reload();
+
+                                // Pulisci solo le note dal localStorage (non tutto!)
+                                localStorage.removeItem('backlog_notes');
+                                localStorage.removeItem('in_progress_notes');
+                                localStorage.removeItem('review_notes');
+                                localStorage.removeItem('done_notes');
+
+                                // Rimuovi la navbar
+                                const navbar = document.querySelector('.navbar');
+                                if (navbar) navbar.remove();
+
+                                // RIMUOVI completamente il container dell'app (non solo nasconderlo)
+                                const appContainer = document.getElementById('main-app-container');
+                                if (appContainer) {
+                                    appContainer.remove();
+                                }
+
+                                // Mostra di nuovo il form di login
+                                const authContainer = document.querySelector('.hero');
+                                if (authContainer) {
+                                    authContainer.style.display = 'flex';
+                                }
+
+                                // Reinizializza il form di login
+                                initAuthForm();
+
+                                console.log('✓ Logout completato');
                             } catch (error) {
                                 console.error('Errore durante il logout:', error);
                                 await showMessage('Errore durante il logout', 'Errore', 'error');
@@ -515,10 +515,41 @@ document.addEventListener('DOMContentLoaded', async function() {
             await loadRoute('settings');
         });
 
-        // Avvia il router (questo caricherà la route in base all'hash)
-        // Il router si occuperà di caricare home.html e mostrare navbar/content
-        console.log('→ Avvio router...');
-        router.start();
+    // Avvia il router (questo caricherà la route in base all'hash)
+    // Il router si occuperà di caricare home.html e mostrare navbar/content
+    console.log('→ Avvio router...');
+    router.start();
+}
+
+// Inizializzazione al caricamento della pagina
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        console.log('=== AVVIO APP ===');
+
+        // Verifica autenticazione
+        let isAuthenticated = false;
+        try {
+            const token = await window.__TAURI__.core.invoke('get_saved_token');
+            if (token && token.length > 0) {
+                isAuthenticated = true;
+                console.log('✓ UTENTE AUTENTICATO - Token trovato');
+            } else {
+                console.log('✗ Token vuoto - Login richiesto');
+            }
+        } catch (error) {
+            isAuthenticated = false;
+            console.log('✗ UTENTE NON AUTENTICATO - Login richiesto');
+        }
+
+        // Se non è autenticato, inizializza solo il form di login
+        if (!isAuthenticated) {
+            console.log('→ Caricamento form di login...');
+            initAuthForm();
+            return; // Esci qui, non serve inizializzare il resto
+        }
+
+        // Se è autenticato, inizializza l'app
+        await initializeApp();
 
     } catch (error) {
         console.error('❌ ERRORE CRITICO durante inizializzazione:', error);
@@ -649,12 +680,9 @@ function initAuthForm() {
                 console.error('Errore sincronizzazione note:', syncError);
             }
 
-            // Setta il flag per indicare che è un reload post-login
-            localStorage.setItem('just_logged_in', 'true');
-
-            // Ricarica la pagina per mostrare l'app
-            console.log('Ricarico la pagina...');
-            window.location.reload();
+            // Inizializza l'app senza reload
+            console.log('Inizializzazione app...');
+            await initializeApp();
 
         } catch (error) {
             console.error('Errore login:', error);
@@ -668,10 +696,11 @@ function initAuthForm() {
     // Registrazione
     btnRegister.addEventListener('click', async () => {
         const name = registerName.value.trim();
+        const username = document.getElementById('register_username').value.trim();
         const email = registerEmail.value.trim();
         const password = registerPassword.value.trim();
 
-        if (!name || !email || !password) {
+        if (!name || !username || !email || !password) {
             showAlert('Compila tutti i campi', 'warning');
             return;
         }
@@ -683,7 +712,8 @@ function initAuthForm() {
             const result = await window.__TAURI__.core.invoke('register', {
                 email: email,
                 password: password,
-                name: name
+                name: name,
+                username: username
             });
 
             console.log('Registrazione OK:', result);
@@ -710,6 +740,81 @@ function initAuthForm() {
 
     registerPassword.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') btnRegister.click();
+    });
+
+    // Password dimenticata
+    const forgotPasswordLink = document.getElementById('forgot-password-link');
+    if (forgotPasswordLink) {
+        forgotPasswordLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+
+            // Chiedi email con un dialog custom
+            const email = await promptForEmail();
+            if (!email) return;
+
+            try {
+                const result = await window.__TAURI__.core.invoke('recover_password', { email });
+                await window.showMessage(result, 'Successo', 'success');
+            } catch (error) {
+                console.error('Errore recupero password:', error);
+                await window.showMessage('Errore: ' + error, 'Errore', 'error');
+            }
+        });
+    }
+}
+
+// Helper per chiedere l'email
+async function promptForEmail() {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+
+        const dialog = document.createElement('div');
+        dialog.className = 'card bg-base-100 shadow-xl';
+        dialog.style.cssText = 'width: 400px; padding: 30px;';
+
+        dialog.innerHTML = `
+            <h2 class="text-xl font-bold mb-4">Recupero Password</h2>
+            <p class="mb-4">Inserisci la tua email per ricevere il link di reset:</p>
+            <div class="form-control mb-4">
+                <input type="email" id="recover-email" class="input input-bordered" placeholder="email@esempio.com">
+            </div>
+            <div class="flex justify-end gap-2">
+                <button class="btn btn-ghost" id="btn-cancel-recover">Annulla</button>
+                <button class="btn btn-primary" id="btn-send-recover">Invia</button>
+            </div>
+        `;
+
+        overlay.appendChild(dialog);
+        document.body.appendChild(overlay);
+
+        const emailInput = dialog.querySelector('#recover-email');
+
+        dialog.querySelector('#btn-cancel-recover').addEventListener('click', () => {
+            overlay.remove();
+            resolve(null);
+        });
+
+        dialog.querySelector('#btn-send-recover').addEventListener('click', () => {
+            const email = emailInput.value.trim();
+            overlay.remove();
+            resolve(email || null);
+        });
+
+        emailInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const email = emailInput.value.trim();
+                overlay.remove();
+                resolve(email || null);
+            }
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+                resolve(null);
+            }
+        });
     });
 }
 

@@ -31,11 +31,16 @@ struct LoginResponse {
 pub struct UserInfo {
     pub id: String,
     pub email: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<String>,
 }
 
 #[derive(Serialize)]
 struct UserData {
     name: String,
+    username: String,
 }
 
 /// Dati per registrazione
@@ -96,6 +101,8 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
     let user_info = UserInfo {
         id: data.user.id,
         email: data.user.email,
+        name: None, // Il nome sarà caricato successivamente da get_user_metadata
+        username: None,
     };
 
     save_user_info(&user_info).await?;
@@ -106,9 +113,9 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
 }
 
 /// Comando di REGISTRAZIONE
-/// Chiamato dal JS: await invoke('register', { email: '...', password: '...', name: '...' })
+/// Chiamato dal JS: await invoke('register', { email: '...', password: '...', name: '...', username: '...' })
 #[tauri::command]
-pub async fn register(email: String, password: String, name: String) -> Result<String, String> {
+pub async fn register(email: String, password: String, name: String, username: String) -> Result<String, String> {
     println!("Tentativo registrazione per: {}", email);
 
     let client = reqwest::Client::new();
@@ -116,7 +123,7 @@ pub async fn register(email: String, password: String, name: String) -> Result<S
     let body = RegisterRequest {
         email: email.clone(),
         password,
-        data: UserData { name },
+        data: UserData { name, username },
     };
 
     let response = client
@@ -150,6 +157,62 @@ pub async fn get_user_info() -> Result<UserInfo, String> {
     load_user_info().await
 }
 
+/// Comando per ottenere i metadata dell'utente da Supabase (incluso il nome)
+#[tauri::command]
+pub async fn get_user_metadata(token: String) -> Result<UserInfo, String> {
+    println!("Recupero metadata utente da Supabase");
+
+    let client = reqwest::Client::new();
+
+    let response = client
+        .get(format!("{}/auth/v1/user", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Authorization", format!("Bearer {}", token))
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    if !response.status().is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Err(format!("Errore recupero metadata: {}", error_text));
+    }
+
+    #[derive(Deserialize)]
+    struct UserMetadataResponse {
+        id: String,
+        email: String,
+        user_metadata: Option<serde_json::Value>,
+    }
+
+    let user_data: UserMetadataResponse = response
+        .json()
+        .await
+        .map_err(|e| format!("Errore parsing risposta: {}", e))?;
+
+    // Estrai nome e username dai metadata se presenti
+    let (name, username) = if let Some(ref meta) = user_data.user_metadata {
+        let name = meta.get("name")
+            .and_then(|n| n.as_str())
+            .map(|s| s.to_string());
+        let username = meta.get("username")
+            .and_then(|u| u.as_str())
+            .map(|s| s.to_string());
+        (name, username)
+    } else {
+        (None, None)
+    };
+
+    let user_info = UserInfo {
+        id: user_data.id,
+        email: user_data.email,
+        name,
+        username,
+    };
+
+    println!("Metadata recuperati: email={}, name={:?}, username={:?}", user_info.email, user_info.name, user_info.username);
+    Ok(user_info)
+}
+
 /// Comando di LOGOUT
 #[tauri::command]
 pub async fn logout() -> Result<(), String> {
@@ -157,8 +220,155 @@ pub async fn logout() -> Result<(), String> {
     delete_token().await?;
     delete_user_info().await?;
 
-    println!("=K Logout effettuato");
+    println!("Logout effettuato");
     Ok(())
+}
+
+/// Comando per cambiare la password
+#[tauri::command]
+pub async fn change_password(token: String, new_password: String) -> Result<String, String> {
+    println!("Tentativo cambio password");
+
+    let client = reqwest::Client::new();
+
+    #[derive(Serialize)]
+    struct PasswordChangeRequest {
+        password: String,
+    }
+
+    let body = PasswordChangeRequest {
+        password: new_password,
+    };
+
+    let response = client
+        .put(format!("{}/auth/v1/user", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    if !response.status().is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Err(format!("Cambio password fallito: {}", error_text));
+    }
+
+    println!("Password cambiata con successo");
+    Ok("Password aggiornata con successo!".to_string())
+}
+
+/// Comando per aggiornare il nome utente
+#[tauri::command]
+pub async fn update_user_name(token: String, new_name: String) -> Result<String, String> {
+    println!("Tentativo aggiornamento nome utente");
+
+    let client = reqwest::Client::new();
+
+    #[derive(Serialize)]
+    struct UserMetadata {
+        name: String,
+    }
+
+    #[derive(Serialize)]
+    struct UpdateUserRequest {
+        data: UserMetadata,
+    }
+
+    let body = UpdateUserRequest {
+        data: UserMetadata { name: new_name },
+    };
+
+    let response = client
+        .put(format!("{}/auth/v1/user", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    if !response.status().is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Err(format!("Aggiornamento nome fallito: {}", error_text));
+    }
+
+    println!("Nome utente aggiornato con successo");
+    Ok("Nome utente aggiornato con successo!".to_string())
+}
+
+/// Comando per aggiornare l'username
+#[tauri::command]
+pub async fn update_username(token: String, new_username: String) -> Result<String, String> {
+    println!("Tentativo aggiornamento username");
+
+    let client = reqwest::Client::new();
+
+    #[derive(Serialize)]
+    struct UsernameMetadata {
+        username: String,
+    }
+
+    #[derive(Serialize)]
+    struct UpdateUsernameRequest {
+        data: UsernameMetadata,
+    }
+
+    let body = UpdateUsernameRequest {
+        data: UsernameMetadata { username: new_username },
+    };
+
+    let response = client
+        .put(format!("{}/auth/v1/user", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    if !response.status().is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Err(format!("Aggiornamento username fallito: {}", error_text));
+    }
+
+    println!("Username aggiornato con successo");
+    Ok("Username aggiornato con successo!".to_string())
+}
+
+/// Comando per recuperare la password (invia email di reset)
+#[tauri::command]
+pub async fn recover_password(email: String) -> Result<String, String> {
+    println!("Richiesta recupero password per: {}", email);
+
+    let client = reqwest::Client::new();
+
+    #[derive(Serialize)]
+    struct RecoverRequest {
+        email: String,
+    }
+
+    let body = RecoverRequest { email };
+
+    let response = client
+        .post(format!("{}/auth/v1/recover", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Content-Type", "application/json")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    if !response.status().is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Err(format!("Recupero password fallito: {}", error_text));
+    }
+
+    println!("Email di recupero inviata");
+    Ok("Email di recupero password inviata! Controlla la tua casella di posta.".to_string())
 }
 
 // ==================== GESTIONE TOKEN (TEMPORANEA - FILE) ====================

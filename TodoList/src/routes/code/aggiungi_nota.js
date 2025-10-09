@@ -1,5 +1,5 @@
 import { getTraduzione } from './carica_lingua.js';
-import { createNoteOnSupabase, deleteNoteFromSupabase, moveNoteOnSupabase } from './supabase_helper.js';
+import { createNoteOnSupabase, deleteNoteFromSupabase, moveNoteOnSupabase, updateNoteOnSupabase } from './supabase_helper.js';
 
 export const aggiungiNota_run = () =>  {
     console.log('aggiungiNota_run eseguito');
@@ -413,9 +413,133 @@ function mostraDettagliNota(titolo, descrizione, stato) {
         }
     });
 
-    // Bottone Modifica (placeholder)
+    // Bottone Modifica
     dettagli.querySelector('#btn-modifica-nota').addEventListener('click', async () => {
-        await window.showMessage('Funzionalità di modifica in arrivo!', 'Info', 'info');
+        // Chiudi il dialog dettagli
+        overlay.remove();
+
+        // Apri dialog di modifica
+        mostraDialogModifica(titolo, descrizione, stato);
+    });
+
+    // Chiudi quando si clicca fuori
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+}
+
+// Funzione per mostrare dialog di modifica
+function mostraDialogModifica(titoloOriginale, descrizioneOriginale, stato) {
+    // Crea overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px;';
+
+    const dialog = document.createElement('div');
+    dialog.className = 'card bg-base-100 shadow-xl';
+    dialog.style.cssText = 'width: 90%; max-width: 600px; padding: 30px;';
+
+    dialog.innerHTML = `
+        <h2 class="text-2xl font-bold mb-6">Modifica Nota</h2>
+        <div class="form-control mb-4">
+            <label class="label">
+                <span class="label-text font-semibold">Titolo</span>
+            </label>
+            <input type="text" id="edit-title" class="input input-bordered w-full" value="${titoloOriginale}">
+        </div>
+        <div class="form-control mb-6">
+            <label class="label">
+                <span class="label-text font-semibold">Descrizione</span>
+            </label>
+            <textarea id="edit-description" class="textarea textarea-bordered w-full h-32" style="resize: vertical;">${descrizioneOriginale}</textarea>
+        </div>
+        <div class="flex justify-end gap-2">
+            <button class="btn btn-ghost" id="btn-annulla-modifica">Annulla</button>
+            <button class="btn btn-primary" id="btn-salva-modifica">Salva Modifiche</button>
+        </div>
+    `;
+
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    const inputTitolo = dialog.querySelector('#edit-title');
+    const inputDescrizione = dialog.querySelector('#edit-description');
+
+    // Bottone Annulla
+    dialog.querySelector('#btn-annulla-modifica').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // Bottone Salva
+    dialog.querySelector('#btn-salva-modifica').addEventListener('click', async () => {
+        const nuovoTitolo = inputTitolo.value.trim();
+        const nuovaDescrizione = inputDescrizione.value.trim();
+
+        if (!nuovoTitolo) {
+            await window.showMessage('Il titolo non può essere vuoto', 'Attenzione', 'warning');
+            return;
+        }
+
+        if (!nuovaDescrizione) {
+            await window.showMessage('La descrizione non può essere vuota', 'Attenzione', 'warning');
+            return;
+        }
+
+        // Trova la card nel DOM
+        const cards = document.querySelectorAll('.todo-list-content .card, .todo-list-content-single .card');
+        let cardToUpdate = null;
+
+        cards.forEach(c => {
+            const cardTitle = c.querySelector('.card-title')?.textContent;
+            const cardDesc = c.querySelector('p')?.textContent;
+            if (cardTitle === titoloOriginale && cardDesc === descrizioneOriginale) {
+                cardToUpdate = c;
+            }
+        });
+
+        if (!cardToUpdate) {
+            await window.showMessage('Nota non trovata nel DOM', 'Errore', 'error');
+            return;
+        }
+
+        const noteId = cardToUpdate.dataset.noteId;
+
+        // Aggiorna su Supabase se ha un ID
+        if (noteId) {
+            try {
+                await updateNoteOnSupabase(noteId, nuovoTitolo, nuovaDescrizione, stato);
+                console.log('Nota aggiornata su Supabase');
+            } catch (error) {
+                console.error('Errore aggiornamento su Supabase:', error);
+                await window.showMessage('Errore durante l\'aggiornamento: ' + error, 'Errore', 'error');
+                return;
+            }
+        }
+
+        // Aggiorna la card nel DOM
+        cardToUpdate.querySelector('.card-title').textContent = nuovoTitolo;
+        cardToUpdate.querySelector('p').textContent = nuovaDescrizione;
+
+        // Aggiorna localStorage
+        const colonnaCorrente = cardToUpdate.closest('.todo-list, .todo-list-single');
+        const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
+
+        const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes');
+        const index = items.findIndex(item =>
+            item.id === noteId ||
+            (item.title === titoloOriginale && item.description === descrizioneOriginale)
+        );
+
+        if (index !== -1) {
+            items[index].title = nuovoTitolo;
+            items[index].description = nuovaDescrizione;
+            window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
+            console.log('LocalStorage aggiornato');
+        }
+
+        await window.showMessage('Nota modificata con successo!', 'Successo', 'success');
+        overlay.remove();
     });
 
     // Chiudi quando si clicca fuori
