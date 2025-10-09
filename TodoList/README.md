@@ -32,10 +32,13 @@ Per poter svilippare al meglio il nostro progetto siamo partiti dall'analisi dei
 - ### Prestazioni
   - L'applicazione dev'essere rapida nelle operazioni base (aggiunta, eliminazione e spostamento)
 - ### Scalabilità
+  - L'applicazione è facilmente implementabile su un sistema distribuito, in modo da poterlo scalare a livello nazionale ed internazionale
 - ### Sicurezza
+  - L'applicazione fa uso di sistemi di archiviazione locale per le note, ma queste informazioni si possono facilmente spostare in un database criptato per proteggere i dati dell'utente  
 - ### Affidabilità
+  - L'applicazione assicura sempre il salvataggio delle note quando l'utente le crea, in modo da non perdere informazioni importanti
 - ### Usabilità
-
+  - L'interfaccia grafica dell'applicazione è intuitiva e facile da usare
 
 ---
 ## IDE Setup consigliato
