@@ -1,4 +1,5 @@
 import { getTraduzione } from './carica_lingua.js';
+import { createNoteOnSupabase, deleteNoteFromSupabase, moveNoteOnSupabase } from './supabase_helper.js';
 
 export const aggiungiNota_run = () =>  {
     console.log('aggiungiNota_run eseguito');
@@ -52,7 +53,7 @@ export const aggiungiNota_run = () =>  {
     const newInputAggiunta = inputAggiunta.cloneNode(true)
     inputAggiunta.parentNode.replaceChild(newInputAggiunta, inputAggiunta)
 
-    newInputAggiunta.addEventListener('click', () => {
+    newInputAggiunta.addEventListener('click', async () => {
         if (stato === null) {
             alert(getTraduzione('home.selectStatus'))
             return
@@ -75,21 +76,31 @@ export const aggiungiNota_run = () =>  {
         const colonnaStato = document.getElementById(stato)
         const listaDoveAggiungere = colonnaStato.querySelector('.todo-list-content')
 
-        // Crea la card
-        const card = creaCard(inputTitolo, inputDescrizione, stato)
+        try {
+            // Salva su Supabase
+            const note = await createNoteOnSupabase(inputTitolo, inputDescrizione, stato);
 
-        // Aggiungi la card al contenitore
-        listaDoveAggiungere.appendChild(card)
+            // Crea la card con l'ID da Supabase
+            const card = creaCard(inputTitolo, inputDescrizione, stato, note.id);
+            card.dataset.noteId = note.id;
 
-        // Pulisci gli input
-        document.getElementById('input-titolo').value = ''
-        document.getElementById('input-descrizione').value = ''
+            // Aggiungi la card al contenitore
+            listaDoveAggiungere.appendChild(card);
 
-        // Salva su localStorage
-        const items = LoadFromLocalStorage(stato + '_notes')
-        items.push({ title: inputTitolo, description: inputDescrizione })
-        SaveToLocalStorage(stato + '_notes', items)
-        console.log('Nota aggiunta al localStorage:', stato + '_notes', items)
+            // Salva anche nel localStorage per uso offline
+            const items = LoadFromLocalStorage(stato + '_notes');
+            items.push({ id: note.id, title: inputTitolo, description: inputDescrizione });
+            SaveToLocalStorage(stato + '_notes', items);
+
+            console.log('Nota salvata su Supabase con ID:', note.id);
+
+            // Pulisci gli input
+            document.getElementById('input-titolo').value = ''
+            document.getElementById('input-descrizione').value = ''
+        } catch (error) {
+            console.error('Errore durante il salvataggio della nota:', error);
+            alert('Errore durante il salvataggio della nota: ' + error);
+        }
     })
 }
 
@@ -125,29 +136,39 @@ function mostraMenuSposta(card) {
     // Event listener per i bottoni
     const bottoni = menu.querySelectorAll('[data-target]');
     bottoni.forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             const target = btn.getAttribute('data-target');
 
-            // PRIMA: Leggi titolo e descrizione dalla card (prima di spostarla/rimuoverla!)
-            const titolo = card.querySelector('.card-title').textContent
-            const descrizione = card.querySelector('p').textContent
+            // Leggi dati dalla card
+            const titolo = card.querySelector('.card-title').textContent;
+            const descrizione = card.querySelector('p').textContent;
+            const noteId = card.dataset.noteId;
 
-            // POI: Aggiorna il localStorage
-            const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes')
-            const index = items.findIndex(item => item.title === titolo && item.description === descrizione)
-            console.log('Spostamento - Colonna origine:', colonnaCorrenteId, 'Items trovati:', items, 'Index:', index)
-            if (index !== -1) {
-                items.splice(index, 1);
-                window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items)
-                console.log('Rimosso da', colonnaCorrenteId + '_notes', items)
+            // Sposta su Supabase se ha un ID
+            if (noteId) {
+                try {
+                    await moveNoteOnSupabase(noteId, target);
+                    console.log('Nota spostata su Supabase');
+                } catch (error) {
+                    console.error('Errore spostamento su Supabase:', error);
+                    alert('Errore durante lo spostamento: ' + error);
+                    return;
+                }
             }
 
-            const items2 = window.LoadFromLocalStorage(target + '_notes')
-            items2.push({ title: titolo, description: descrizione })
-            window.SaveToLocalStorage(target + '_notes', items2)
-            console.log('Aggiunto a', target + '_notes', items2)
+            // Aggiorna localStorage
+            const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes');
+            const index = items.findIndex(item => item.id === noteId || (item.title === titolo && item.description === descrizione));
+            if (index !== -1) {
+                const movedItem = items.splice(index, 1)[0];
+                window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
 
-            // INFINE: Sposta/rimuovi la card dal DOM
+                const items2 = window.LoadFromLocalStorage(target + '_notes');
+                items2.push(noteId ? { id: noteId, title: titolo, description: descrizione } : { title: titolo, description: descrizione });
+                window.SaveToLocalStorage(target + '_notes', items2);
+            }
+
+            // Sposta/rimuovi la card dal DOM
             spostaCard(card, target);
             overlay.remove();
         });
@@ -183,10 +204,13 @@ function spostaCard(card, targetId) {
     targetContent.appendChild(card);
 }
 
-export const creaCard = (titolo, descrizione, stato) => {
+export const creaCard = (titolo, descrizione, stato, noteId = null) => {
         // Crea l'elemento card
         const card = document.createElement('div')
         card.className = 'card w-full bg-base-100 card-lg shadow-sm'
+        if (noteId) {
+            card.dataset.noteId = noteId;
+        }
 
         const cardBody = document.createElement('div')
         cardBody.className = 'card-body'
@@ -215,22 +239,36 @@ export const creaCard = (titolo, descrizione, stato) => {
         console.log(stato);
 
         // Event listener per eliminare
-        btnElimina.addEventListener('click', () => {
+        btnElimina.addEventListener('click', async () => {
             if (confirm(getTraduzione('home.confirmDelete'))) {
                 // Determina la colonna corrente dal DOM (sia home che pagine singole)
                 const colonnaCorrente = card.closest('.todo-list, .todo-list-single');
                 const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
 
+                const noteId = card.dataset.noteId;
+
+                // Elimina da Supabase se ha un ID
+                if (noteId) {
+                    try {
+                        await deleteNoteFromSupabase(noteId);
+                        console.log('Nota eliminata da Supabase');
+                    } catch (error) {
+                        console.error('Errore eliminazione da Supabase:', error);
+                        alert('Errore durante l\'eliminazione: ' + error);
+                        return;
+                    }
+                }
+
+                // Rimuovi dal DOM
                 card.remove();
 
-                // Rimuovi dal localStorage (usa sempre funzioni globali negli event listener)
+                // Rimuovi dal localStorage
                 const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes');
-                const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
-                console.log('Eliminazione - Colonna:', colonnaCorrenteId, 'Items:', items, 'Index:', index)
+                const index = items.findIndex(item => item.id === noteId || (item.title === titolo && item.description === descrizione));
                 if (index !== -1) {
                     items.splice(index, 1);
                     window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
-                    console.log('Eliminato da localStorage:', colonnaCorrenteId + '_notes', items)
+                    console.log('Eliminato da localStorage');
                 }
             }
         });
@@ -327,7 +365,7 @@ function mostraDettagliNota(titolo, descrizione, stato) {
     });
 
     // Bottone Elimina
-    dettagli.querySelector('#btn-elimina-nota').addEventListener('click', () => {
+    dettagli.querySelector('#btn-elimina-nota').addEventListener('click', async () => {
         if (confirm(getTraduzione('home.confirmDelete'))) {
             // Trova la card nel DOM
             const cards = document.querySelectorAll('.todo-list-content .card, .todo-list-single .card');
@@ -342,6 +380,20 @@ function mostraDettagliNota(titolo, descrizione, stato) {
             });
 
             if (cardToRemove) {
+                const noteId = cardToRemove.dataset.noteId;
+
+                // Elimina da Supabase se ha un ID
+                if (noteId) {
+                    try {
+                        await deleteNoteFromSupabase(noteId);
+                        console.log('Nota eliminata da Supabase');
+                    } catch (error) {
+                        console.error('Errore eliminazione da Supabase:', error);
+                        alert('Errore durante l\'eliminazione: ' + error);
+                        return;
+                    }
+                }
+
                 // Determina la colonna corrente
                 const colonnaCorrente = cardToRemove.closest('.todo-list, .todo-list-single');
                 const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
@@ -350,7 +402,7 @@ function mostraDettagliNota(titolo, descrizione, stato) {
 
                 // Rimuovi dal localStorage
                 const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes');
-                const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
+                const index = items.findIndex(item => item.id === noteId || (item.title === titolo && item.description === descrizione));
                 if (index !== -1) {
                     items.splice(index, 1);
                     window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items);

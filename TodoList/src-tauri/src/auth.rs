@@ -1,7 +1,8 @@
 use serde::{Deserialize, Serialize};
 
 // URL del server
-const SERVER_URL: &str = "http://192.168.1.100:8080";
+const SERVER_URL: &str = "https://zprhzalelveyqzzuazex.supabase.co";
+const SUPABASE_KEY: &str = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpwcmh6YWxlbHZleXF6enVhemV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDEwODQsImV4cCI6MjA3NTQ3NzA4NH0.A7T9SLw6Myn1j3MwHAs3owpmzx_IZuYGQdFx_YuQdp4";
 
 // ==================== STRUTTURE DATI ====================
 
@@ -12,19 +13,29 @@ struct LoginRequest {
     password: String,
 }
 
+#[derive(Deserialize, Serialize, Clone)]
+struct SupabaseUser {
+    pub id: String,
+    pub email: String,
+}
+
 /// Risposta dal server dopo login
 #[derive(Deserialize)]
 struct LoginResponse {
-    token: String,
-    user: UserInfo,
+    access_token: String,
+    user: SupabaseUser,
 }
 
 /// Info utente
 #[derive(Deserialize, Serialize, Clone)]
 pub struct UserInfo {
-    pub id: i32,
+    pub id: String,
     pub email: String,
-    pub name: String,
+}
+
+#[derive(Serialize)]
+struct UserData {
+    name: String,
 }
 
 /// Dati per registrazione
@@ -32,7 +43,7 @@ pub struct UserInfo {
 struct RegisterRequest {
     email: String,
     password: String,
-    name: String,
+    data: UserData,
 }
 
 // ==================== COMANDI TAURI ====================
@@ -54,7 +65,9 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
 
     // Invia POST al server
     let response = client
-        .post(format!("{}/api/auth/login", SERVER_URL))
+        .post(format!("{}/auth/v1/token?grant_type=password", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Content-Type", "application/json")
         .json(&body)
         .send()
         .await
@@ -72,12 +85,18 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
         .map_err(|e| format!("Errore parsing risposta: {}", e))?;
 
     // Salva il token (per ora in memoria, poi miglioreremo)
-    save_token(&data.token).await?;
-    save_user_info(&data.user).await?;
+    save_token(&data.access_token).await?;
+    //converto supabaseUSer in UserInfo visto che save_user_info si aspetta UserInfo
+    let user_info = UserInfo {
+        id: data.user.id,
+        email: data.user.email,
+    };
+
+    save_user_info(&user_info).await?;
 
     println!("Login effettuato! Token salvato.");
 
-    Ok(format!("Login effettuato: {}", data.user.name))
+    Ok(format!("Login effettuato: {}", user_info.email))
 }
 
 /// Comando di REGISTRAZIONE
@@ -91,11 +110,13 @@ pub async fn register(email: String, password: String, name: String) -> Result<S
     let body = RegisterRequest {
         email: email.clone(),
         password,
-        name
+        data: UserData { name },
     };
 
     let response = client
-        .post(format!("{}/api/auth/register", SERVER_URL))
+        .post(format!("{}/auth/v1/signup", SERVER_URL))
+        .header("apikey", SUPABASE_KEY)
+        .header("Content-Type", "application/json")
         .json(&body)
         .send()
         .await

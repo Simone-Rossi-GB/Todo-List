@@ -3,6 +3,7 @@ import { inizializzaConfig } from './code/salva_configurazione.js';
 import { ricercaNote_run } from './code/ricerca_note.js';
 import { gestioneCard_run } from './code/gestione_card.js';
 import { carica_lingua } from './code/carica_lingua.js';
+import { loadNotesFromSupabase } from './code/supabase_helper.js';
 
 // Rendi funzioni disponibili globalmente
 window.carica_lingua = carica_lingua;
@@ -360,7 +361,8 @@ export const loadNotesFromLocalStorage = (key, section) => {
     notes.forEach((note) => {
         const colonnaStato = document.getElementById(section);
         const listaDoveAggiungere = colonnaStato.querySelector('.todo-list-content');
-        const card = creaCard(note.title, note.description, section);
+        const card = creaCard(note.title, note.description, section, note.id);
+        if (note.id) card.dataset.noteId = note.id;  // Salva l'ID nella card
         listaDoveAggiungere.appendChild(card);
     })
 }

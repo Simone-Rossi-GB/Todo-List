@@ -79,12 +79,42 @@ btnLogin.addEventListener('click', async () => {
         });
 
         console.log('Login OK:', result);
-        showAlert(result, 'success');
+        showAlert('Login effettuato! Sincronizzazione note...', 'success');
 
-        // Dopo 1 secondo, vai alla home
+        // Carica note da Supabase e sincronizza localStorage
+        try {
+            const token = await window.__TAURI__.core.invoke('get_saved_token');
+            const notes = await window.__TAURI__.core.invoke('load_notes', { token });
+            console.log('Note caricate da Supabase:', notes.length);
+
+            // Raggruppa per stato
+            const backlog = notes.filter(n => n.status === 'backlog');
+            const in_progress = notes.filter(n => n.status === 'in_progress');
+            const review = notes.filter(n => n.status === 'review');
+            const done = notes.filter(n => n.status === 'done');
+
+            // Salva nel localStorage (usa le funzioni globali)
+            const mapNotes = (notesList) => notesList.map(n => ({
+                id: n.id,
+                title: n.title,
+                description: n.description
+            }));
+
+            window.SaveToLocalStorage('backlog_notes', mapNotes(backlog));
+            window.SaveToLocalStorage('in_progress_notes', mapNotes(in_progress));
+            window.SaveToLocalStorage('review_notes', mapNotes(review));
+            window.SaveToLocalStorage('done_notes', mapNotes(done));
+
+            console.log('Note sincronizzate nel localStorage');
+        } catch (syncError) {
+            console.error('Errore sincronizzazione note:', syncError);
+            // Continua comunque con il login
+        }
+
+        // Dopo 2 secondi, vai alla home
         setTimeout(() => {
             window.location.hash = '/';
-        }, 1000);
+        }, 2000);
 
     } catch (error) {
         console.error('Errore login:', error);

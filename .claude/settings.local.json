@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dir /b srcroutes)",
       "Bash(npm run tauri:*)",
-      "Bash(npm run tauri:dev:*)"
+      "Bash(npm run tauri:dev:*)",
+      "Bash(cargo:*)"
     ],
     "deny": [],
     "ask": []

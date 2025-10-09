@@ -1,5 +1,6 @@
-// Importa il modulo auth
+// Importa i moduli
 mod auth;
+mod notes;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -18,7 +19,12 @@ pub fn run() {
             auth::register,
             auth::logout,
             auth::get_saved_token,
-            auth::get_user_info
+            auth::get_user_info,
+            notes::load_notes,
+            notes::create_note,
+            notes::update_note,
+            notes::delete_note,
+            notes::move_note
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
