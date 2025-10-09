@@ -417,17 +417,29 @@ async function initializeApp() {
                                 const navbar = document.querySelector('.navbar');
                                 if (navbar) navbar.remove();
 
-                                // RIMUOVI completamente il container dell'app (non solo nasconderlo)
+                                // RIMUOVI completamente il container dell'app
                                 const appContainer = document.getElementById('main-app-container');
                                 if (appContainer) {
                                     appContainer.remove();
                                 }
 
-                                // Mostra di nuovo il form di login
+                                // Mostra di nuovo il form di login e RIPRISTINA LA CENTRATURA
                                 const authContainer = document.querySelector('.hero');
                                 if (authContainer) {
+                                    // Rimuovi eventuali stili inline che potrebbero interferire
+                                    authContainer.removeAttribute('style');
+
                                     authContainer.style.display = 'flex';
+
+                                    authContainer.classList.add('min-h-screen');
                                 }
+
+                                // Assicurati che il container padre #app-content sia visibile
+                                const appContent = document.getElementById('app-content');
+                                if (appContent) {
+                                    appContent.style.display = 'block';
+                                }
+                                // FINE MODIFICHE PER CENTRATURA
 
                                 // Reinizializza il form di login
                                 initAuthForm();
