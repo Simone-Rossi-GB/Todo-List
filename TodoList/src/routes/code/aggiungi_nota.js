@@ -236,8 +236,22 @@ export const creaCard = (titolo, descrizione, stato) => {
         });
 
         // Event listener per spostare
-        btnSposta.addEventListener('click', () => {
+        btnSposta.addEventListener('click', (e) => {
+            e.stopPropagation();
             mostraMenuSposta(card);
+        });
+
+        // Event listener per aprire i dettagli della nota
+        cardBody.style.cursor = 'pointer';
+        cardBody.addEventListener('click', (event) => {
+            // Ignora il click se viene dai bottoni
+            if (event.target.closest('.btn')) {
+                return;
+            }
+            console.log('Click sulla card: ' + titolo);
+
+            // Mostra l'overlay con i dettagli della nota
+            mostraDettagliNota(titolo, descrizione, stato);
         });
 
         // Assembla la struttura
@@ -250,6 +264,96 @@ export const creaCard = (titolo, descrizione, stato) => {
 
         // Ritorna la card creata
         return card
+}
+
+// Funzione per mostrare i dettagli della nota in overlay
+function mostraDettagliNota(titolo, descrizione, stato) {
+    // Crea un overlay con i dettagli
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;';
+
+    const dettagli = document.createElement('div');
+    dettagli.className = 'card bg-base-100 shadow-xl';
+    dettagli.style.cssText = 'width: 90%; max-width: 600px; padding: 20px; max-height: 80vh; overflow-y: auto;';
+
+    // Mappa dello stato ai badge
+    const statusMap = {
+        'backlog': { text: getTraduzione('status.backlog'), class: 'badge-primary' },
+        'in_progress': { text: getTraduzione('status.inProgress'), class: 'badge-warning' },
+        'review': { text: getTraduzione('status.review'), class: 'badge-info' },
+        'done': { text: getTraduzione('status.done'), class: 'badge-success' }
+    };
+
+    const statusInfo = statusMap[stato] || statusMap['backlog'];
+
+    dettagli.innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">${titolo}</h2>
+        <div class="divider"></div>
+        <p class="whitespace-pre-wrap mb-4">${descrizione}</p>
+        <div class="flex gap-2 mb-4">
+            <span class="badge ${statusInfo.class}">${statusInfo.text}</span>
+        </div>
+        <div class="flex justify-end gap-2">
+            <button class="btn btn-primary btn-sm" id="btn-modifica-nota">Modifica</button>
+            <button class="btn btn-error btn-sm" id="btn-elimina-nota">${getTraduzione('home.deleteButton')}</button>
+            <button class="btn btn-ghost btn-sm" id="btn-chiudi-dettagli">Chiudi</button>
+        </div>
+    `;
+
+    overlay.appendChild(dettagli);
+    document.body.appendChild(overlay);
+
+    // Bottone Chiudi
+    dettagli.querySelector('#btn-chiudi-dettagli').addEventListener('click', () => {
+        overlay.remove();
+    });
+
+    // Bottone Elimina
+    dettagli.querySelector('#btn-elimina-nota').addEventListener('click', () => {
+        if (confirm(getTraduzione('home.confirmDelete'))) {
+            // Trova la card nel DOM
+            const cards = document.querySelectorAll('.todo-list-content .card, .todo-list-single .card');
+            let cardToRemove = null;
+
+            cards.forEach(c => {
+                const cardTitle = c.querySelector('.card-title')?.textContent;
+                const cardDesc = c.querySelector('p')?.textContent;
+                if (cardTitle === titolo && cardDesc === descrizione) {
+                    cardToRemove = c;
+                }
+            });
+
+            if (cardToRemove) {
+                // Determina la colonna corrente
+                const colonnaCorrente = cardToRemove.closest('.todo-list, .todo-list-single');
+                const colonnaCorrenteId = colonnaCorrente ? colonnaCorrente.id : stato;
+
+                cardToRemove.remove();
+
+                // Rimuovi dal localStorage
+                const items = window.LoadFromLocalStorage(colonnaCorrenteId + '_notes');
+                const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
+                if (index !== -1) {
+                    items.splice(index, 1);
+                    window.SaveToLocalStorage(colonnaCorrenteId + '_notes', items);
+                }
+            }
+
+            overlay.remove();
+        }
+    });
+
+    // Bottone Modifica (placeholder)
+    dettagli.querySelector('#btn-modifica-nota').addEventListener('click', () => {
+        alert('Funzionalità di modifica in arrivo!');
+    });
+
+    // Chiudi quando si clicca fuori
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
 }
 
 export const LoadFromLocalStorage = (key) => {

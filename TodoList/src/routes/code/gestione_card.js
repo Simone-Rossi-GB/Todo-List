@@ -59,8 +59,8 @@ function spostaCard(card, targetId) {
     targetContent.appendChild(card);
 }
 
-// Funzione per mostrare i dettagli della card
-function mostraDettagliCard(titolo, descrizione) {
+// Funzione per mostrare i dettagli della card in overlay
+function mostraDettagliCard(titolo, descrizione, stato) {
     // Crea un overlay con i dettagli
     const overlay = document.createElement('div');
     overlay.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;';
@@ -69,21 +69,72 @@ function mostraDettagliCard(titolo, descrizione) {
     dettagli.className = 'card bg-base-100 shadow-xl';
     dettagli.style.cssText = 'width: 90%; max-width: 600px; padding: 20px; max-height: 80vh; overflow-y: auto;';
 
+    // Mappa dello stato ai badge
+    const statusMap = {
+        'backlog': { text: 'Backlog', class: 'badge-primary' },
+        'in_progress': { text: 'In Progress', class: 'badge-warning' },
+        'review': { text: 'Review', class: 'badge-info' },
+        'done': { text: 'Done', class: 'badge-success' }
+    };
+
+    const statusInfo = statusMap[stato] || statusMap['backlog'];
+
     dettagli.innerHTML = `
         <h2 class="text-2xl font-bold mb-4">${titolo}</h2>
         <div class="divider"></div>
         <p class="whitespace-pre-wrap mb-4">${descrizione}</p>
-        <div class="flex justify-end">
-            <button class="btn btn-ghost" id="btn-chiudi-dettagli">Chiudi</button>
+        <div class="flex gap-2 mb-4">
+            <span class="badge ${statusInfo.class}">${statusInfo.text}</span>
+        </div>
+        <div class="flex justify-end gap-2">
+            <button class="btn btn-primary btn-sm" id="btn-modifica-nota">Modifica</button>
+            <button class="btn btn-error btn-sm" id="btn-elimina-nota">Elimina</button>
+            <button class="btn btn-ghost btn-sm" id="btn-chiudi-dettagli">Chiudi</button>
         </div>
     `;
 
     overlay.appendChild(dettagli);
     document.body.appendChild(overlay);
 
-    // Chiudi quando si clicca il bottone
+    // Bottone Chiudi
     dettagli.querySelector('#btn-chiudi-dettagli').addEventListener('click', () => {
         overlay.remove();
+    });
+
+    // Bottone Elimina
+    dettagli.querySelector('#btn-elimina-nota').addEventListener('click', () => {
+        if (confirm(`Sei sicuro di voler eliminare la nota "${titolo}"?`)) {
+            // Trova la card nel DOM
+            const cards = document.querySelectorAll('.todo-list-content .card');
+            let cardToRemove = null;
+
+            cards.forEach(card => {
+                const cardTitle = card.querySelector('.card-title')?.textContent;
+                const cardDesc = card.querySelector('p')?.textContent;
+                if (cardTitle === titolo && cardDesc === descrizione) {
+                    cardToRemove = card;
+                }
+            });
+
+            if (cardToRemove) {
+                cardToRemove.remove();
+
+                // Rimuovi dal localStorage
+                const items = LoadFromLocalStorage(stato + '_notes');
+                const index = items.findIndex(item => item.title === titolo && item.description === descrizione);
+                if (index !== -1) {
+                    items.splice(index, 1);
+                    SaveToLocalStorage(stato + '_notes', items);
+                }
+            }
+
+            overlay.remove();
+        }
+    });
+
+    // Bottone Modifica (placeholder)
+    dettagli.querySelector('#btn-modifica-nota').addEventListener('click', () => {
+        alert('Funzionalità di modifica in arrivo!');
     });
 
     // Chiudi quando si clicca fuori
@@ -136,25 +187,27 @@ export const gestioneCard_run = () => {
             btnSposta.parentNode.replaceChild(newBtnSposta, btnSposta);
 
             // Aggiungi listener
-            newBtnSposta.addEventListener('click', () => {
+            newBtnSposta.addEventListener('click', (e) => {
+                e.stopPropagation();
                 mostraMenuSposta(card);
             });
         }
 
+        // Aggiungi listener sul CARD BODY per aprire i dettagli
+        const cardBody = card.querySelector('.card-body');
+        if (cardBody) {
+            cardBody.style.cursor = 'pointer';
+            cardBody.addEventListener('click', (event) => {
+                // Ignora il click se viene dai bottoni
+                if (event.target.closest('.btn')) {
+                    return;
+                }
+                console.log('Click sulla card: ' + titolo);
 
-        const tmp = card.querySelector('.card-title');
-
-        const newTitle = tmp.cloneNode(true);
-        tmp.parentNode.replaceChild(newTitle, tmp);
-
-        tmp.addEventListener('dblclick', (event) => {
-            // Ignora il doppio click se viene dai bottoni
-            if (event.target.closest('.btn')) {
-                return;
-            }
-            console.log('Doppio click sulla card: ' + titolo);
-            
-        });
+                // Mostra l'overlay con i dettagli della nota
+                mostraDettagliCard(titolo, descrizione, stato);
+            });
+        }
 
     });
 };
