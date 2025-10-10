@@ -737,6 +737,6 @@ Questo progetto dimostra competenze in:
 
 ---
 
-**Data ultima modifica:** Gennaio 2025
+**Data ultima modifica:** 10 Ottobre 2025
 **Autore:** Simone Rossi
 **Licenza:** Progetto accademico
