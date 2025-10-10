@@ -1,6 +1,6 @@
 export default {
   "app": {
-    "title": "TodoList"
+    "title": "Jotly"
   },
   "nav": {
     "home": "Home",

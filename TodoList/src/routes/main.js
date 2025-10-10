@@ -431,7 +431,7 @@ async function initializeApp() {
                                         <div class="hero min-h-screen bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10">
                                             <div class="hero-content flex-col lg:flex-row-reverse max-w-5xl gap-12">
                                                 <div class="text-center lg:text-left">
-                                                    <h1 class="text-6xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">TodoList</h1>
+                                                    <h1 class="text-6xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">Jotly</h1>
                                                     <p class="text-xl text-base-content/80 leading-relaxed">Accedi per gestire i tuoi task in modo efficiente e produttivo</p>
                                                 </div>
                                                 <div class="card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100 border border-base-300">

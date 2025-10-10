@@ -7,7 +7,8 @@
       "Bash(cargo:*)",
       "Bash(dir:*)",
       "Bash(npm run tauri:build:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(npx @tauri-apps/cli icon:*)"
     ],
     "deny": [],
     "ask": []
