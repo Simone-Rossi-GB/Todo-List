@@ -1,0 +1,360 @@
+/* ===== STILI AUTH ===== */
+#app-content {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero {
+    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    width: 100%;
+    flex: 1;
+}
+
+#main-app-container {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card {
+    backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.btn {
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.input {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input:focus {
+    border-color: hsl(var(--p));
+    box-shadow: 0 0 0 3px hsl(var(--p) / 0.1);
+}
+
+.tabs .tab {
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.tabs .tab-active {
+    background: hsl(var(--p));
+    color: hsl(var(--pc));
+}
+
+/* ===== STILI HOME APP ===== */
+
+/* Context7 - Navbar normale fissa in alto */
+.navbar-simple-top {
+    position: fixed;
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    z-index: 1000;
+    border-radius: 0.75rem;
+    backdrop-filter: blur(12px);
+    background: hsl(var(--b1) / 0.9);
+    border: 1px solid hsl(var(--bc) / 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Contenuto todo area */
+.todo-container {
+    margin-top: 6rem;
+    margin-left: 16px;
+    margin-right: 16px;
+    margin-bottom: 0;
+    border-radius: 1rem;
+    background: white;
+    min-height: auto;
+}
+
+.elemento-centrato {
+    width: auto;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+}
+
+.todo-div {
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 20px 20px 20px;
+    overflow-x: hidden;
+}
+
+.div-title{
+    font-size: 1.25rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 0.75rem;
+    letter-spacing: 0.075em;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    border-radius: 12px 12px 0 0;
+    background: inherit;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', sans-serif;
+}
+
+.todo-list{
+    flex: 1;
+    min-width: 220px;
+    max-width: 320px;
+    height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.todo-list-single {
+    flex: 1;
+    width: 100%;
+    height: calc(100vh - 250px);
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+
+.todo-list-content {
+    display: flex;
+    flex-direction: column;
+    padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    border-radius: 0 0 12px 12px;
+}
+
+.todo-list-content-single {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 20px;
+    gap: 25px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    padding: auto;
+    border-radius: 0 0 12px 12px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.todo-list-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.todo-list-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.todo-list-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.todo-list-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+#backlog{
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+#in_progress{
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 12px rgba(240, 147, 251, 0.3);
+}
+
+#review{
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 4px 12px rgba(79, 172, 254, 0.3);
+}
+
+#done{
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    box-shadow: 0 4px 12px rgba(67, 233, 123, 0.3);
+}
+
+
+/* Nasconde scrollbar */
+body {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-feature-settings: 'liga', 'kern';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+.card {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+    width: 250px;
+    height: min-content;
+    border: 1px solid hsl(var(--bc) / 0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Card nelle pagine singole - 4 colonne */
+.todo-list-content-single .card {
+    width: calc((100% - 75px) / 4);
+    min-width: 200px;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.card-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    letter-spacing: -0.01em;
+}
+
+.card-body p {
+    color: hsl(var(--bc) / 0.7);
+    font-size: 0.925rem;
+    line-height: 1.5;
+}
+
+.card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    border-color: hsl(var(--p) / 0.3);
+}
+
+/* Disabilita hover sulla card impostazioni */
+.settings-card {
+    cursor: default;
+}
+
+.settings-card:hover {
+    transform: none;
+}
+
+/* Fix per la X dell'input search */
+.input input[type="search"] {
+    flex: 1;
+    width: 100%;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 1em;
+    width: 1em;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+    background-size: 1em 1em;
+    cursor: pointer;
+    opacity: 0.5;
+    flex-shrink: 0;
+}
+
+input[type="search"]::-webkit-search-cancel-button:hover {
+    opacity: 0.8;
+}
+
+/* ===== TEMA SCURO ===== */
+[data-theme="dark"] body {
+    background: #0f172a;
+}
+
+[data-theme="dark"] .navbar-simple-top {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .todo-container {
+    background: #1e293b;
+}
+
+/* Gradienti più scuri e intensi per tema scuro */
+[data-theme="dark"] #backlog {
+    background: linear-gradient(135deg, #4c1d95 0%, #581c87 100%);
+}
+
+[data-theme="dark"] #in_progress {
+    background: linear-gradient(135deg, #be123c 0%, #9f1239 100%);
+}
+
+[data-theme="dark"] #review {
+    background: linear-gradient(135deg, #0369a1 0%, #0c4a6e 100%);
+}
+
+[data-theme="dark"] #done {
+    background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+}
+
+/* Card nel tema scuro */
+[data-theme="dark"] .card {
+    background: #334155;
+    border: 1px solid #475569;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .card:hover {
+    border-color: #64748b;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] .card-title {
+    color: #f1f5f9;
+}
+
+[data-theme="dark"] .card-body p {
+    color: #cbd5e1;
+}
+
+/* Scrollbar tema scuro */
+[data-theme="dark"] .todo-list-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .todo-list-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+[data-theme="dark"] .todo-list-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.6);
+}

@@ -1,18 +1,23 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "todolist",
+  "productName": "Jotly",
   "version": "0.1.0",
-  "identifier": "com.simo.todolist",
+  "identifier": "com.simo.jotly",
   "build": {
-    "frontendDist": "../src"
+    "frontendDist": "../src/routes"
   },
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "todolist",
-        "width": 800,
-        "height": 600
+        "title": "Jotly",
+        "width": 1200,
+        "height": 800,
+        "resizable": false,
+        "minWidth": 1200,
+        "minHeight": 800,
+        "maxWidth": 1200,
+        "maxHeight": 800
       }
     ],
     "security": {

@@ -1,0 +1,45 @@
+{
+  "app": {
+    "title": "Jotly"
+  },
+  "nav": {
+    "home": "Home",
+    "backlog": "Backlog",
+    "in_progress": "In Progress",
+    "review": "Review",
+    "done": "Done",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "email": "Email",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "saveChanges": "Save Changes"
+  },
+  "settings": {
+    "title": "Settings",
+    "appPreferences": "Application Preferences",
+    "profileSection": "Profile",
+    "profilePicture": "Profile Picture",
+    "appearanceSection": "Appearance",
+    "darkTheme": "Dark Theme",
+    "autoScroll": "Auto-scroll Columns",
+    "languageSection": "Language",
+    "selectLanguage": "Select Language",
+    "save": "Save",
+    "successMessage": "Settings saved successfully!",
+    "errorMessage": "An error occured during the savings"
+  },
+  "placeholders": {
+    "name": "Name",
+    "password": "Password",
+    "email": "Email"
+  },
+  "languages": {
+    "it": "Italiano",
+    "en": "English"
+  }
+}

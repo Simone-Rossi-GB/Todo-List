@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jotly - Accedi</title>
+    <script src="main.js" defer type="module"></script>
+    <!-- Tailwind CSS + DaisyUI via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body class="bg-base-200">
+    <!-- Contenitore principale -->
+    <div id="app-content">
+        <!-- Contenuto Auth -->
+        <div class="hero min-h-screen bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10">
+            <div class="hero-content flex-col lg:flex-row-reverse max-w-5xl gap-12">
+                <div class="text-center lg:text-left">
+                    <h1 class="text-6xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">Jotly</h1>
+                    <p class="text-xl text-base-content/80 leading-relaxed">Accedi per gestire i tuoi task in modo efficiente e produttivo</p>
+                </div>
+                <div class="card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100 border border-base-300">
+                    <div class="card-body">
+                        <div class="tabs tabs-boxed mb-4">
+                            <a class="tab tab-active" id="login-tab">Login</a>
+                            <a class="tab" id="register-tab">Registrati</a>
+                        </div>
+
+                        <!-- Login Form -->
+                        <div id="login-form">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Email</span>
+                                </label>
+                                <input type="email" placeholder="email" class="input input-bordered" id="input_email" required />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Password</span>
+                                </label>
+                                <input type="password" placeholder="password" class="input input-bordered" id="input_password" required />
+                                <label class="label">
+                                    <a href="#" class="label-text-alt link link-hover" id="forgot-password-link">Password dimenticata?</a>
+                                </label>
+                            </div>
+                            <div class="form-control mt-6">
+                                <button class="btn btn-primary" id="btn_login">Login</button>
+                            </div>
+                            <!-- Alert per errori/successi -->
+                            <div id="auth-alert" class="alert mt-4" style="display: none;">
+                                <span id="auth-alert-text"></span>
+                            </div>
+                        </div>
+
+                        <!-- Register Form (hidden by default) -->
+                        <div id="register-form" style="display: none;">
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Nome</span>
+                                </label>
+                                <input type="text" placeholder="nome" class="input input-bordered" id="register_name" required />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Username</span>
+                                </label>
+                                <input type="text" placeholder="username" class="input input-bordered" id="register_username" required />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Email</span>
+                                </label>
+                                <input type="email" placeholder="email" class="input input-bordered" id="register_email" required />
+                            </div>
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Password</span>
+                                </label>
+                                <input type="password" placeholder="password" class="input input-bordered" id="register_password" required />
+                            </div>
+                            <div class="form-control mt-6">
+                                <button class="btn btn-primary" id="btn_register">Registrati</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

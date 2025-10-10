@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jotly</title>
+    <script src="main.js" defer type="module"></script>
+    <!-- Tailwind CSS + DaisyUI via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+            href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css"
+            rel="stylesheet" type="text/css" />
+    <link href="styles.css" rel="stylesheet">
+</head>
+
+<body class="bg-base-200">
+
+<!-- Menù a tendina -->
+<div
+        class="navbar bg-base-100 shadow-lg navbar-simple-top elemento-centrato" style="display: none;">
+    <div class="flex-none">
+        <div class="dropdown">
+            <div tabindex="0" role="button"
+                 class="btn btn-square btn-ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                     viewBox="0 0 24 24"
+                     class="inline-block h-5 w-5 stroke-current">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </div>
+            <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+                <li><a href="#/" data-route="/" data-i18n="nav.home">Home</a></li>
+                <li><a href="#/backlog" data-route="/backlog" data-i18n="nav.backlog">Backlog</a></li>
+                <li><a href="#/in_progress" data-route="/in_progress" data-i18n="nav.in_progress">In Progress</a></li>
+                <li><a href="#/review" data-route="/review" data-i18n="nav.review">Review</a></li>
+                <li><a href="#/done" data-route="/done" data-i18n="nav.done">Done</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Titolo applicazione -->
+    <div class="flex-1 ml-2">
+        <span class="text-xl font-semibold" data-i18n="app.title">Jotly</span>
+    </div>
+
+    <!-- Barra di ricerca -->
+    <label class="input bg-base-200" style="width: 25em;">
+        <svg class="h-[1em] opacity-50"
+             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 24">
+            <g stroke-linejoin="round" stroke-linecap="round"
+               stroke-width="2.5" fill="none" stroke="currentColor">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.3-4.3"></path>
+            </g>
+        </svg>
+        <input type="search" required placeholder="Cerca note..." id="input-ricerca" data-i18n-placeholder="home.searchPlaceholder" />
+    </label>
+
+    <!-- Navbar profilo utente -->
+    <div class="flex-none ml-4">
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button"
+                 class="btn btn-ghost btn-circle avatar">
+                <div class="w-10 rounded-full">
+                    <img alt="Avatar"
+                         src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                </div>
+            </div>
+            <ul tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1000] mt-3 w-52 p-2 shadow">
+                <li><a href="#/profile" data-i18n="nav.profile">Profile</a></li>
+                <li><a href="#/settings" data-i18n="nav.settings">Settings</a></li>
+                <li><a href="#/auth" data-i18n="nav.logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Contenitore principale per contenuto dinamico -->
+<div id="app-content" style="display: none;">
+    <!-- Input per nuovo todo -->
+    <div class="todo-container p-3 elemento-centrato"
+         style="min-height: auto">
+        <div class="flex space-x-2 items-center">
+            <input type="text" placeholder="Titolo nota..."
+                   class="input input-bordered w-64" id="input-titolo" data-i18n-placeholder="home.titlePlaceholder"/>
+
+            <input type="text" placeholder="Descrizione..."
+                   class="input input-bordered flex-1" id="input-descrizione" data-i18n-placeholder="home.descriptionPlaceholder"/>
+
+            <div class="dropdown dropdown-end" id="filtro-stato">
+                <div tabindex="0" role="button"
+                     class="btn btn-outline" id="label-stato" data-i18n="home.statusLabel">Stato ▼</div>
+                <ul tabindex="0"
+                    class="menu dropdown-content bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <button class="btn btn-sm btn-ghost" id="button-backlog" data-i18n="status.backlog">Backlog</button>
+                    <button class="btn btn-sm btn-ghost" id="button-inProgress" data-i18n="status.inProgress">In Progress</button>
+                    <button class="btn btn-sm btn-ghost" id="button-review" data-i18n="status.review">Review</button>
+                    <button class="btn btn-sm btn-ghost" id="button-done" data-i18n="status.done">Done</button>
+                </ul>
+            </div>
+
+            <div>
+                <button tabindex="0" role="button"
+                        class="btn btn-primary" id="bottone-aggiungi" data-i18n="home.addButton">Aggiungi</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Note Todo List -->
+
+    <div class="todo-div elemento-centrato">
+        <div id="backlog" class="todo-list">
+            <div class="div-title" data-i18n="status.backlog">Backlog</div>
+            <div class="todo-list-content" id="backlog-note">
+                <!-- contenuto della colonna backlog -> le card backlog -->
+            </div>
+        </div>
+
+        <div id="in_progress" class="todo-list">
+            <div class="div-title" data-i18n="status.inProgress">In Progress</div>
+            <div class="todo-list-content">
+                <!-- contenuto della colonna in progress -> le card in progress -->
+            </div>
+        </div>
+
+        <div id="review" class="todo-list">
+            <div class="div-title" data-i18n="status.review">Review</div>
+            <div class="todo-list-content">
+                <!-- contenuto della colonna review -> le card review -->
+            </div>
+        </div>
+
+        <div id="done" class="todo-list">
+            <div class="div-title" data-i18n="status.done">Done</div>
+            <div class="todo-list-content">
+                <!-- contenuto della colonna done -> le card done -->
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,80 @@
+<!-- Contenuto Settings -->
+<div class="todo-container p-4 elemento-centrato">
+    <h1 class="text-3xl font-bold mb-3" data-i18n="settings.title">Impostazioni</h1>
+
+    <div class="mt-3">
+        <div class="card bg-base-100 shadow-xl settings-card">
+            <div class="card-body py-4">
+                <h2 class="card-title mb-2" data-i18n="settings.appPreferences">Preferenze Applicazione</h2>
+
+                <div class="divider my-2" data-i18n="settings.profileSection">Profilo</div>
+
+                <div class="form-control mb-2">
+                    <label class="label py-1">
+                        <span class="label-text" data-i18n="settings.profilePicture">Foto Profilo</span>
+                    </label>
+                    <div class="flex items-center gap-4">
+                        <div class="avatar">
+                            <div class="w-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                <img id="preview-avatar" src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt="Avatar" />
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 flex-1">
+                            <input type="file" accept="image/*" class="file-input file-input-bordered file-input-sm w-full max-w-xs" id="input-foto-profilo" />
+                            <button class="btn btn-ghost btn-sm w-full max-w-xs" id="btn-rimuovi-foto" data-i18n="settings.removePhoto">Rimuovi Foto</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="divider my-2" data-i18n="settings.appearanceSection">Aspetto</div>
+
+                <div class="form-control">
+                    <label class="label cursor-pointer py-2">
+                        <span class="label-text" data-i18n="settings.darkTheme">Tema Scuro</span>
+                        <input type="checkbox" class="toggle toggle-primary" id="checkBox_tema_scuro"/>
+                    </label>
+                </div>
+
+                <div class="form-control">
+                    <label class="label cursor-pointer py-2">
+                        <span class="label-text" data-i18n="settings.autoScroll">Auto-scroll Colonne</span>
+                        <input type="checkbox" class="toggle toggle-primary" id="checkBox_autoScroll"/>
+                    </label>
+                </div>
+
+                <div class="divider my-2" data-i18n="settings.languageSection">Lingua</div>
+
+                <div class="form-control mb-2">
+                    <label class="label py-1">
+                        <span class="label-text" data-i18n="settings.selectLanguage">Seleziona Lingua</span>
+                    </label>
+                    <select class="select select-bordered w-full max-w-xs" id="form_lingua">
+                        <option value="it" data-i18n="languages.it">Italiano</option>
+                        <option value="en" data-i18n="languages.en">English</option>
+                    </select>
+                </div>
+
+                <div class="card-actions justify-between mt-3">
+                    <button class="btn btn-error" id="btn-resetta-note" data-i18n="settings.resetNotes">Resetta tutte le note</button>
+                    <button class="btn btn-primary" id="btn-salva-settings" data-i18n="settings.save">Salva</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifica successo -->
+    <div id="notifica-successo" class="alert alert-success fixed bottom-4 left-1/2 transform -translate-x-1/2 w-auto max-w-md z-50" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span data-i18n="settings.successMessage">Impostazioni salvate con successo!</span>
+    </div>
+
+    <!-- Alert errore -->
+    <div id="alert-errore" class="alert alert-error fixed bottom-4 left-1/2 transform -translate-x-1/2 w-auto max-w-md z-50" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span id="alert-errore-text"></span>
+    </div>
+</div>

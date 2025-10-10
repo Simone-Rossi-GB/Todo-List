@@ -1,0 +1,72 @@
+export default {
+  "app": {
+    "title": "Jotly"
+  },
+  "nav": {
+    "home": "Home",
+    "backlog": "Backlog",
+    "in_progress": "In Progress",
+    "review": "Review",
+    "done": "Done",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+  "home": {
+    "searchPlaceholder": "Search notes...",
+    "titlePlaceholder": "Note title...",
+    "descriptionPlaceholder": "Description...",
+    "statusLabel": "Status",
+    "addButton": "Add",
+    "moveButton": "Move",
+    "deleteButton": "Delete",
+    "selectStatus": "Please select a status for the note",
+    "enterTitle": "Please enter a title for the note",
+    "enterDescription": "Please enter a description for the note",
+    "moveNoteTo": "Move note to:",
+    "cancel": "Cancel",
+    "confirmDelete": "Are you sure you want to delete this note?"
+  },
+  "status": {
+    "backlog": "Backlog",
+    "inProgress": "In Progress",
+    "review": "Review",
+    "done": "Done"
+  },
+  "profile": {
+    "title": "Profile",
+    "username": "Username",
+    "email": "Email",
+    "oldPassword": "Old Password",
+    "newPassword": "New Password",
+    "saveChanges": "Save Changes"
+  },
+  "settings": {
+    "title": "Settings",
+    "appPreferences": "Application Preferences",
+    "profileSection": "Profile",
+    "profilePicture": "Profile Picture",
+    "removePhoto": "Remove Photo",
+    "appearanceSection": "Appearance",
+    "darkTheme": "Dark Theme",
+    "autoScroll": "Auto-scroll Columns",
+    "languageSection": "Language",
+    "selectLanguage": "Select Language",
+    "save": "Save",
+    "resetNotes": "Reset all notes",
+    "confirmReset": "Are you sure you want to delete all notes? This action cannot be undone!",
+    "notesReset": "All notes have been deleted!",
+    "photoRemoved": "Profile photo removed!",
+    "successMessage": "Settings saved successfully!",
+    "errorMessage": "An error occured during the savings"
+  },
+  "placeholders": {
+    "name": "Name",
+    "password": "Password",
+    "email": "Email"
+  },
+  "languages": {
+    "it": "Italiano",
+    "en": "English"
+  }
+};
