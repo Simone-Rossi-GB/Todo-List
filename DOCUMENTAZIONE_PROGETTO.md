@@ -738,5 +738,5 @@ Questo progetto dimostra competenze in:
 ---
 
 **Data ultima modifica:** 10 Ottobre 2025
-**Autore:** Simone Rossi
+**Autori:** Simone Rossi - Stellino Marco - Russo Massimo Tammaro
 **Licenza:** Progetto accademico
