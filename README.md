@@ -18,7 +18,7 @@ Per poter svilippare al meglio il nostro progetto siamo partiti dall'analisi dei
 - ### Should Have
   - Poter eliminare le note
   - Poter cambiare lo stato di una nota
-  - Poter cercare una nota in base al titolo o cintenuto
+  - Poter cercare una nota in base al titolo o contenuto
 - ### Could Have
   - Poter visualizzare tutte le note di un singolo stato
   - Poter cambiare il tema dell'applicazione (chiaro/scuro)
