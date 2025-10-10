@@ -423,26 +423,102 @@ async function initializeApp() {
                                     appContainer.remove();
                                 }
 
-                                // Mostra di nuovo il form di login e RIPRISTINA LA CENTRATURA
-                                const authContainer = document.querySelector('.hero');
-                                if (authContainer) {
-                                    // Rimuovi eventuali stili inline che potrebbero interferire
-                                    authContainer.removeAttribute('style');
-
-                                    authContainer.style.display = 'flex';
-
-                                    authContainer.classList.add('min-h-screen');
-                                }
-
-                                // Assicurati che il container padre #app-content sia visibile
+                                // RIPRISTINA completamente l'HTML originale di index.html
                                 const appContent = document.getElementById('app-content');
                                 if (appContent) {
-                                    appContent.style.display = 'block';
-                                }
-                                // FINE MODIFICHE PER CENTRATURA
+                                    // Ricarica l'HTML originale del form di login
+                                    appContent.innerHTML = `
+                                        <div class="hero min-h-screen bg-gradient-to-br from-primary/10 via-base-200 to-secondary/10">
+                                            <div class="hero-content flex-col lg:flex-row-reverse max-w-5xl gap-12">
+                                                <div class="text-center lg:text-left">
+                                                    <h1 class="text-6xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-4">TodoList</h1>
+                                                    <p class="text-xl text-base-content/80 leading-relaxed">Accedi per gestire i tuoi task in modo efficiente e produttivo</p>
+                                                </div>
+                                                <div class="card flex-shrink-0 w-full max-w-md shadow-2xl bg-base-100 border border-base-300">
+                                                    <div class="card-body">
+                                                        <div class="tabs tabs-boxed mb-4">
+                                                            <a class="tab tab-active" id="login-tab">Login</a>
+                                                            <a class="tab" id="register-tab">Registrati</a>
+                                                        </div>
 
-                                // Reinizializza il form di login
-                                initAuthForm();
+                                                        <!-- Login Form -->
+                                                        <div id="login-form">
+                                                            <div class="form-control">
+                                                                <label class="label">
+                                                                    <span class="label-text">Email</span>
+                                                                </label>
+                                                                <input type="email" placeholder="email" class="input input-bordered" id="input_email" required />
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label">
+                                                                    <span class="label-text">Password</span>
+                                                                </label>
+                                                                <input type="password" placeholder="password" class="input input-bordered" id="input_password" required />
+                                                                <label class="label">
+                                                                    <a href="#" class="label-text-alt link link-hover" id="forgot-password-link">Password dimenticata?</a>
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-control mt-6">
+                                                                <button class="btn btn-primary" id="btn_login">Login</button>
+                                                            </div>
+                                                            <!-- Alert per errori/successi -->
+                                                            <div id="auth-alert" class="alert mt-4" style="display: none;">
+                                                                <span id="auth-alert-text"></span>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Register Form (hidden by default) -->
+                                                        <div id="register-form" style="display: none;">
+                                                            <div class="form-control">
+                                                                <label class="label">
+                                                                    <span class="label-text">Nome</span>
+                                                                </label>
+                                                                <input type="text" placeholder="nome" class="input input-bordered" id="register_name" required />
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label">
+                                                                    <span class="label-text">Username</span>
+                                                                </label>
+                                                                <input type="text" placeholder="username" class="input input-bordered" id="register_username" required />
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label">
+                                                                    <span class="label-text">Email</span>
+                                                                </label>
+                                                                <input type="email" placeholder="email" class="input input-bordered" id="register_email" required />
+                                                            </div>
+                                                            <div class="form-control">
+                                                                <label class="label">
+                                                                    <span class="label-text">Password</span>
+                                                                </label>
+                                                                <input type="password" placeholder="password" class="input input-bordered" id="register_password" required />
+                                                            </div>
+                                                            <div class="form-control mt-6">
+                                                                <button class="btn btn-primary" id="btn_register">Registrati</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }
+
+                                // RIPRISTINA il tema di default (light)
+                                document.documentElement.setAttribute('data-theme', 'light');
+
+                                // RESET configurazione globale ai defaults
+                                window.appConfig = {
+                                    temaScuro: false,
+                                    autoScroll: true,
+                                    lingua: 'it',
+                                    hasFotoProfilo: false
+                                };
+
+                                // Reinizializza il form di login con i nuovi elementi
+                                setTimeout(() => {
+                                    initAuthForm();
+                                }, 100);
 
                                 console.log('✓ Logout completato');
                             } catch (error) {
