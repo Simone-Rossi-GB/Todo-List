@@ -6,6 +6,16 @@ import { carica_lingua } from './code/carica_lingua.js';
 import { loadNotesFromSupabase } from './code/supabase_helper.js';
 import { showConfirm, showMessage } from './code/dialog_helper.js';
 
+// Usa l'API Tauri globale
+const invoke = window.__TAURI__.core.invoke;
+
+// Rendi invoke disponibile globalmente
+window.invoke = invoke;
+
+// Debug: verifica cosa è disponibile nell'oggetto __TAURI__
+console.log('DEBUG __TAURI__:', Object.keys(window.__TAURI__ || {}));
+console.log('DEBUG __TAURI__.dialog:', window.__TAURI__?.dialog);
+
 // Rendi funzioni disponibili globalmente
 window.carica_lingua = carica_lingua;
 window.LoadFromLocalStorage = LoadFromLocalStorage;
@@ -30,7 +40,7 @@ class Router {
 
     async checkAuth() {
         try {
-            await window.__TAURI__.core.invoke('get_saved_token');
+            await invoke('get_saved_token');
             this.isAuthenticated = true;
             return true;
         } catch (error) {
@@ -88,7 +98,7 @@ class Router {
 
     async start() {
         // Avvia il routing
-        this.handleRoute();
+        await this.handleRoute();
     }
 }
 
@@ -118,6 +128,26 @@ async function loadNavbar() {
     } catch (error) {
         console.error('Errore caricamento navbar:', error);
         return false;
+    }
+}
+
+async function loadUserMetadata() {
+
+    //carichiamo subito dopo il login i metadati nel local storgae così risolviamo il
+    // funzionamento scorretto  che avevo implementato per la quale facevo una get dei metadati
+    // da supabase ogni volta che caricavo la pagina profile
+
+    try {
+        const token = await invoke('get_saved_token');
+        const metadata = await invoke('get_user_metadata', {token});
+
+        // salviamo sia globalmente che in local storage per future implementazioni
+        window.userMetadata = metadata;
+        localStorage.setItem('user_metadata', JSON.stringify(metadata));
+
+        console.log('metadata caricati: ', metadata);
+    } catch (error) {
+        console.error('Errore nel caricare i metadata: ', error);
     }
 }
 
@@ -405,7 +435,7 @@ async function initializeApp() {
                                 console.log('→ Logout in corso...');
 
                                 // Cancella il token dal backend Rust
-                                await window.__TAURI__.core.invoke('logout');
+                                await invoke('logout');
 
                                 // Pulisci solo le note dal localStorage (non tutto!)
                                 localStorage.removeItem('backlog_notes');
@@ -568,9 +598,9 @@ async function initializeApp() {
                     loadNotesFromLocalStorage('review_notes', 'review');
                     loadNotesFromLocalStorage('done_notes', 'done');
 
-                    console.log('✅ Home route loaded completamente!');
+                    console.log('Home route loaded completamente!');
                 } catch (error) {
-                    console.error('❌ Errore durante inizializzazione home:', error);
+                    console.error('Errore durante inizializzazione home:', error);
                 }
             }, 200);
         });
@@ -617,7 +647,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Verifica autenticazione
         let isAuthenticated = false;
         try {
-            const token = await window.__TAURI__.core.invoke('get_saved_token');
+            const token = await invoke('get_saved_token');
             if (token && token.length > 0) {
                 isAuthenticated = true;
                 console.log('✓ UTENTE AUTENTICATO - Token trovato');
@@ -638,9 +668,10 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Se è autenticato, inizializza l'app
         await initializeApp();
+        await loadUserMetadata();
 
     } catch (error) {
-        console.error('❌ ERRORE CRITICO durante inizializzazione:', error);
+        console.error('ERRORE CRITICO durante inizializzazione:', error);
         // Mostra un messaggio di errore all'utente
         document.body.innerHTML = `
             <div style="display: flex; align-items: center; justify-content: center; height: 100vh; background: #1a1a1a; color: white; flex-direction: column; gap: 20px;">
@@ -733,7 +764,7 @@ function initAuthForm() {
             btnLogin.disabled = true;
             btnLogin.textContent = 'Accesso in corso...';
 
-            const result = await window.__TAURI__.core.invoke('login', {
+            const result = await invoke('login', {
                 email: email,
                 password: password
             });
@@ -743,8 +774,8 @@ function initAuthForm() {
 
             // Carica note da Supabase
             try {
-                const token = await window.__TAURI__.core.invoke('get_saved_token');
-                const notes = await window.__TAURI__.core.invoke('load_notes', { token });
+                const token = await invoke('get_saved_token');
+                const notes = await invoke('load_notes', { token });
                 console.log('Note caricate da Supabase:', notes.length);
 
                 const backlog = notes.filter(n => n.status === 'backlog');
@@ -797,7 +828,7 @@ function initAuthForm() {
             btnRegister.disabled = true;
             btnRegister.textContent = 'Registrazione in corso...';
 
-            const result = await window.__TAURI__.core.invoke('register', {
+            const result = await invoke('register', {
                 email: email,
                 password: password,
                 name: name,
@@ -841,11 +872,11 @@ function initAuthForm() {
             if (!email) return;
 
             try {
-                const result = await window.__TAURI__.core.invoke('recover_password', { email });
-                await window.showMessage(result, 'Successo', 'success');
+                const result = await invoke('recover_password', { email });
+                await showMessage(result, 'Successo', 'success');
             } catch (error) {
                 console.error('Errore recupero password:', error);
-                await window.showMessage('Errore: ' + error, 'Errore', 'error');
+                await showMessage('Errore: ' + error, 'Errore', 'error');
             }
         });
     }

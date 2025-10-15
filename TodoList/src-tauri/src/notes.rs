@@ -67,6 +67,14 @@ pub struct Note {
     pub updated_at: Option<String>,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct CreateNewConfigRequest {
+    pub temaScuro: bool,
+    pub autoScroll: bool,
+    pub lingua: String,
+    pub hasFotoProfilo: bool,
+}
+
 /// Struttura per creare una nuova nota
 #[derive(Serialize)]
 struct CreateNoteRequest {
@@ -154,6 +162,43 @@ pub async fn create_note(
 
     println!("Nota creata con ID: {:?}", note.id);
     Ok(note)
+
+}
+
+#[tauri::command]
+pub async fn save_configuration(configuration: String, token: String) -> Result<(), String> {
+    println!("Inizio salvataggio configurazione");
+
+    let user_id = extract_user_id_from_token(&token)?;
+
+    let client = reqwest::Client::new();
+
+    let configuration_json: serde_json::Value = serde_json::from_str(&configuration).map_err(|e| e.to_string())?;
+
+    let body = CreateNewConfigRequest {
+        temaScuro: configuration_json["temaScuro"].as_bool().unwrap(),
+        autoScroll: configuration_json["autoScroll"].as_bool().unwrap(),
+        lingua: configuration_json["lingua"].as_str().unwrap().to_string(),
+        hasFotoProfilo: configuration_json["hasFotoProfilo"].as_bool().unwrap(),
+    };
+
+    let response = client
+        .patch(format!("{}/rest/v1/", SUPABASE_URL, note_id))
+        .header("apikey", SUPABASE_KEY)
+        .header("Authorization", format!("Bearer {}", token))
+        .header("Content-Type", "application/json")
+        .header("Prefer", "return=representation")
+        .json(&body)
+        .send()
+        .await
+        .map_err(|e| format!("Errore connessione: {}", e))?;
+
+    if !response.status().is_success() {
+        let error_text = response.text().await.unwrap_or_default();
+        return Err(format!("Errore aggiornamento nota: {}", error_text));
+    }
+
+    Ok(())
 }
 
 /// Aggiorna una nota esistente

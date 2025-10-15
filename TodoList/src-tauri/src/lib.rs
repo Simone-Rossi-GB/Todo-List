@@ -13,6 +13,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![
             greet,
             auth::login,
@@ -25,6 +26,7 @@ pub fn run() {
             auth::update_user_name,
             auth::update_username,
             auth::recover_password,
+            notes::save_configuration,
             notes::load_notes,
             notes::create_note,
             notes::update_note,

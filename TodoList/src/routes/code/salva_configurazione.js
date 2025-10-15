@@ -1,8 +1,10 @@
+const { appConfigDir, join } = window.__TAURI__.path;
+const invoke = window.__TAURI__.core.invoke;
+const { writeTextFile, readTextFile, writeFile, readFile, exists, mkdir, remove } = window.__TAURI__.fs;
+
 async function salvaConfig(config) {
     try {
         // Ottieni il percorso completo della directory AppConfig
-        const { appConfigDir, join } = window.__TAURI__.path;
-        const { writeTextFile, mkdir } = window.__TAURI__.fs;
 
         const configDir = await appConfigDir();
         const configPath = await join(configDir, 'config.json');
@@ -29,9 +31,6 @@ async function salvaConfig(config) {
 async function caricaConfig() {
     try {
         // Ottieni il percorso completo della directory AppConfig
-        const { appConfigDir, join } = window.__TAURI__.path;
-        const { readTextFile } = window.__TAURI__.fs;
-
         const configDir = await appConfigDir();
         const configPath = await join(configDir, 'config.json');
 
@@ -51,9 +50,6 @@ async function caricaConfig() {
 
 async function salvaFotoProfilo(file) {
     try {
-        const { appConfigDir, join } = window.__TAURI__.path;
-        const { writeFile, mkdir } = window.__TAURI__.fs;
-
         const configDir = await appConfigDir();
 
         // Crea directory se non esiste
@@ -82,9 +78,6 @@ async function salvaFotoProfilo(file) {
 
 async function caricaFotoProfilo() {
     try {
-        const { appConfigDir, join } = window.__TAURI__.path;
-        const { readFile, exists } = window.__TAURI__.fs;
-
         const configDir = await appConfigDir();
 
         // Prova diverse estensioni
@@ -102,10 +95,10 @@ async function caricaFotoProfilo() {
         }
 
         // Nessuna foto trovata, usa default
-        return 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp';
+        return './assets/no_profile_pic.png';
     } catch (error) {
         console.log('Errore caricamento foto:', error);
-        return 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp';
+        return './assets/no_profile_pic.png';
     }
 }
 
@@ -166,9 +159,6 @@ function mostraAlert(tipo, messaggio) {
 
 async function rimuoviFotoProfilo() {
     try {
-        const { appConfigDir, join } = window.__TAURI__.path;
-        const { remove, exists } = window.__TAURI__.fs;
-
         const configDir = await appConfigDir();
         const extensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
 
@@ -292,7 +282,7 @@ export const salvaConfigurazione_run = async () => {
 
             if (rimosso) {
                 // Ripristina immagine di default
-                const defaultImg = 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp';
+                const defaultImg = './assets/no_profile_pic.png';
                 previewAvatar.src = defaultImg;
 
                 // Aggiorna navbar
@@ -344,6 +334,8 @@ export const salvaConfigurazione_run = async () => {
             lingua: select_lingua.value,
             hasFotoProfilo: nuovoFilefoto ? true : config.hasFotoProfilo
         };
+
+        invoke('save_configuration', nuovaConfig);
 
         console.log('Nuova config:', nuovaConfig);
 

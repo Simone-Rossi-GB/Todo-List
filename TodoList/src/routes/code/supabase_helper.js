@@ -1,8 +1,9 @@
 //ottengo da rust il token dell'autenticazione
+const invoke = window.__TAURI__.core.invoke;
 
 export async function getToken() {
     try {
-        const token = await window.__TAURI__.core.invoke('get_saved_token');
+        const token = await invoke('get_saved_token');
         return token;
     } catch (error) {
         console.error('Nessun token trovato --> ', error);
@@ -19,7 +20,7 @@ export async function loadNotesFromSupabase(){
     }
 
     try {
-        const notes = await window.__TAURI__.core.invoke('load_notes', {token});
+        const notes = await invoke('load_notes', {token});
         return notes;
     } catch (error) {
         console.error('Errore nel caricare le note --> ', error);
@@ -33,7 +34,7 @@ export async function createNoteOnSupabase(title, description, status) {
         throw new Error('Non autenticato');
     }
 
-    const note = await window.__TAURI__.core.invoke('create_note', {
+    const note = await invoke('create_note', {
         token,
         title,
         description,
@@ -49,7 +50,7 @@ export async function deleteNoteFromSupabase(noteId){
         throw new Error('Non autenticato');
     }
 
-    await window.__TAURI__.core.invoke('delete_note', {
+    await invoke('delete_note', {
        token,
        noteId
     });
@@ -61,7 +62,7 @@ export async function moveNoteOnSupabase(noteId, newStatus) {
         throw new Error('Non autenticato');
     }
 
-    const note = await window.__TAURI__.core.invoke('move_note', {
+    const note = await invoke('move_note', {
        token,
        noteId,
        newStatus
@@ -76,7 +77,7 @@ export async function updateNoteOnSupabase(noteId, title, description, status) {
         throw new Error('Non autenticato');
     }
 
-    const note = await window.__TAURI__.core.invoke('update_note', {
+    const note = await invoke('update_note', {
         token,
         noteId,
         title,

@@ -82,11 +82,14 @@ pub async fn login(email: String, password: String) -> Result<String, String> {
         .await
         .map_err(|e| format!("Errore connessione: {}", e))?;
 
-    println!("richiesta POST inviata: {}", response.status());
+    let status = response.status();
+    println!("richiesta POST inviata: {}", status);
 
     // Controlla lo status code
-    if !response.status().is_success() {
-        return Err(format!("Login fallito: {}", response.status()));
+    if !status.is_success() {
+        let error_body = response.text().await.unwrap_or_else(|_| "Impossibile leggere body errore".to_string());
+        println!("ERRORE LOGIN - Status: {} - Body: {}", status, error_body);
+        return Err(format!("Login fallito: {} - {}", status, error_body));
     }
 
     // Deserializza la risposta
@@ -135,12 +138,17 @@ pub async fn register(email: String, password: String, name: String, username: S
         .await
         .map_err(|e| format!("Errore connessione: {}", e))?;
 
-    if !response.status().is_success() {
+    let status = response.status();
+    println!("Risposta registrazione - Status: {}", status);
+
+    if !status.is_success() {
         let error_text = response.text().await.unwrap_or_default();
+        println!("ERRORE REGISTRAZIONE - Body: {}", error_text);
         return Err(format!("Registrazione fallita: {}", error_text));
     }
 
-    println!("Registrazione completata!");
+    let response_body = response.text().await.unwrap_or_default();
+    println!("Registrazione completata! Response body: {}", response_body);
 
     Ok(format!("Utente {} registrato con successo!", email))
 }
@@ -374,51 +382,89 @@ pub async fn recover_password(email: String) -> Result<String, String> {
 // ==================== GESTIONE TOKEN (TEMPORANEA - FILE) ====================
 
 use std::path::PathBuf;
+use std::fs;
 
-/// Percorso dove salvare il token in file
-fn get_token_path() -> PathBuf {
-    // Usa la cartella app data
-    let mut path = std::env::current_dir().unwrap();
-    path.push("token.txt");
-    path
+/// Ottiene la directory AppData appropriata per il sistema operativo
+fn get_app_data_dir() -> Result<PathBuf, String> {
+    // Usa la directory AppData/Application Support appropriata per l'OS
+    let data_dir = if cfg!(target_os = "windows") {
+        std::env::var("APPDATA")
+            .map_err(|_| "Impossibile trovare APPDATA".to_string())?
+    } else if cfg!(target_os = "macos") {
+        let home = std::env::var("HOME")
+            .map_err(|_| "Impossibile trovare HOME".to_string())?;
+        format!("{}/Library/Application Support", home)
+    } else {
+        // Linux
+        let home = std::env::var("HOME")
+            .map_err(|_| "Impossibile trovare HOME".to_string())?;
+        format!("{}/.local/share", home)
+    };
+
+    let mut path = PathBuf::from(data_dir);
+    path.push("Jotly"); // Nome dell'app
+
+    // Crea la directory se non esiste
+    fs::create_dir_all(&path)
+        .map_err(|e| format!("Impossibile creare directory app: {}", e))?;
+
+    println!("App data directory: {:?}", path);
+    Ok(path)
 }
 
-fn get_user_info_path() -> PathBuf {
-    let mut path = std::env::current_dir().unwrap();
+/// Percorso dove salvare il token in file
+fn get_token_path() -> Result<PathBuf, String> {
+    let mut path = get_app_data_dir()?;
+    path.push("token.txt");
+    Ok(path)
+}
+
+fn get_user_info_path() -> Result<PathBuf, String> {
+    let mut path = get_app_data_dir()?;
     path.push("user_info.json");
-    path
+    Ok(path)
 }
 
 async fn save_token(token: &str) -> Result<(), String> {
-    std::fs::write(get_token_path(), token)
-        .map_err(|e| format!("Errore salvataggio token: {}", e))
+    let path = get_token_path()?;
+    std::fs::write(&path, token)
+        .map_err(|e| format!("Errore salvataggio token in {:?}: {}", path, e))?;
+    println!("Token salvato in: {:?}", path);
+    Ok(())
 }
 
 async fn load_token() -> Result<String, String> {
-    std::fs::read_to_string(get_token_path())
+    let path = get_token_path()?;
+    std::fs::read_to_string(&path)
         .map_err(|_| "Nessun token trovato".to_string())
 }
 
 async fn delete_token() -> Result<(), String> {
-    std::fs::remove_file(get_token_path())
+    let path = get_token_path()?;
+    std::fs::remove_file(&path)
         .map_err(|_| "Errore cancellazione token".to_string())
 }
 
 async fn save_user_info(user: &UserInfo) -> Result<(), String> {
+    let path = get_user_info_path()?;
     let json = serde_json::to_string(user)
         .map_err(|e| format!("Errore serializzazione: {}", e))?;
-    std::fs::write(get_user_info_path(), json)
-        .map_err(|e| format!("Errore salvataggio user info: {}", e))
+    std::fs::write(&path, json)
+        .map_err(|e| format!("Errore salvataggio user info in {:?}: {}", path, e))?;
+    println!("User info salvate in: {:?}", path);
+    Ok(())
 }
 
 async fn load_user_info() -> Result<UserInfo, String> {
-    let json = std::fs::read_to_string(get_user_info_path())
+    let path = get_user_info_path()?;
+    let json = std::fs::read_to_string(&path)
         .map_err(|_| "Nessuna info utente trovata".to_string())?;
     serde_json::from_str(&json)
         .map_err(|e| format!("Errore parsing user info: {}", e))
 }
 
 async fn delete_user_info() -> Result<(), String> {
-    std::fs::remove_file(get_user_info_path())
+    let path = get_user_info_path()?;
+    std::fs::remove_file(&path)
         .map_err(|_| "Errore cancellazione user info".to_string())
 }

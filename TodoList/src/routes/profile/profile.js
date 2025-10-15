@@ -1,5 +1,10 @@
 // JavaScript specifico per Profile
+const invoke = window.__TAURI__.core.invoke;
+
 console.log('Profile page loaded');
+
+// Usa la funzione showMessage globale
+const showMessage = window.showMessage;
 
 // Carica foto profilo
 async function caricaFotoProfiloProfilo() {
@@ -34,11 +39,23 @@ async function caricaFotoProfiloProfilo() {
     }
 }
 
+async function getDatiUtente() {
+    const metadata = window.userMetadata || JSON.parse(localStorage.getItem('user_metadata') || '{}');
+
+    if (!metadata.email) {
+        const token = await invoke('get_saved_token');
+        const supabaseUserMetadata = await invoke('get_user_metadata', { token });
+        window.userMetadata = supabaseUserMetadata;
+        return supabaseUserMetadata;
+    }
+
+    return metadata;
+}
+
 // Carica dati utente (email, nome e username) da Supabase
 async function caricaDatiUtente() {
     try {
-        const token = await window.__TAURI__.core.invoke('get_saved_token');
-        const userInfo = await window.__TAURI__.core.invoke('get_user_metadata', { token });
+        const userInfo = await getDatiUtente();
 
         // Mostra email
         const emailElement = document.getElementById('profile-email');
@@ -88,18 +105,18 @@ async function salvaModifiche() {
 
     // Verifica che almeno un campo sia compilato
     if (!nuovoNome && !nuovoUsername && !nuovaPassword) {
-        await window.showMessage('Inserisci almeno un campo da modificare', 'Attenzione', 'warning');
+        await showMessage('Inserisci almeno un campo da modificare', 'Attenzione', 'warning');
         return;
     }
 
     try {
-        const token = await window.__TAURI__.core.invoke('get_saved_token');
+        const token = await invoke('get_saved_token');
         let modificheEffettuate = false;
 
         // Aggiorna nome se fornito
         if (nuovoNome) {
             try {
-                const result = await window.__TAURI__.core.invoke('update_user_name', {
+                const result = await invoke('update_user_name', {
                     token: token,
                     newName: nuovoNome
                 });
@@ -112,7 +129,7 @@ async function salvaModifiche() {
                     displayNameElement.textContent = nuovoNome;
                 }
             } catch (error) {
-                await window.showMessage('Errore aggiornamento nome: ' + error, 'Errore', 'error');
+                await showMessage('Errore aggiornamento nome: ' + error, 'Errore', 'error');
                 return;
             }
         }
@@ -120,7 +137,7 @@ async function salvaModifiche() {
         // Aggiorna username se fornito
         if (nuovoUsername) {
             try {
-                const result = await window.__TAURI__.core.invoke('update_username', {
+                const result = await invoke('update_username', {
                     token: token,
                     newUsername: nuovoUsername
                 });
@@ -133,7 +150,7 @@ async function salvaModifiche() {
                     displayUsernameElement.textContent = '@' + nuovoUsername;
                 }
             } catch (error) {
-                await window.showMessage('Errore aggiornamento username: ' + error, 'Errore', 'error');
+                await showMessage('Errore aggiornamento username: ' + error, 'Errore', 'error');
                 return;
             }
         }
@@ -141,12 +158,12 @@ async function salvaModifiche() {
         // Aggiorna password se fornita
         if (nuovaPassword) {
             if (nuovaPassword.length < 6) {
-                await window.showMessage('La password deve essere di almeno 6 caratteri', 'Errore', 'warning');
+                await showMessage('La password deve essere di almeno 6 caratteri', 'Errore', 'warning');
                 return;
             }
 
             try {
-                const result = await window.__TAURI__.core.invoke('change_password', {
+                const result = await invoke('change_password', {
                     token: token,
                     newPassword: nuovaPassword
                 });
@@ -156,18 +173,18 @@ async function salvaModifiche() {
                 // Pulisci il campo password
                 document.getElementById('profile-new-password-input').value = '';
             } catch (error) {
-                await window.showMessage('Errore cambio password: ' + error, 'Errore', 'error');
+                await showMessage('Errore cambio password: ' + error, 'Errore', 'error');
                 return;
             }
         }
 
         if (modificheEffettuate) {
-            await window.showMessage('Modifiche salvate con successo!', 'Successo', 'success');
+            await showMessage('Modifiche salvate con successo!', 'Successo', 'success');
         }
 
     } catch (error) {
         console.error('Errore durante il salvataggio:', error);
-        await window.showMessage('Errore: ' + error, 'Errore', 'error');
+        await showMessage('Errore: ' + error, 'Errore', 'error');
     }
 }
 

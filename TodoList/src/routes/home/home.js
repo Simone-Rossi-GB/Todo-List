@@ -409,6 +409,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             if (confirmed) {
                 try {
                     await window.__TAURI__.core.invoke('logout');
+                    delete window.userMetadata;
+
+                    // anche col clear rimuoviamo manualmente gli user metadata
+                    localStorage.removeItem('user_metadata');
 
                     // Cancella localStorage
                     localStorage.clear();

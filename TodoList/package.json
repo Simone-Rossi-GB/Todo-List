@@ -4,14 +4,19 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "tauri": "tauri"
+    "tauri": "tauri",
+    "css:build": "npx tailwindcss -i ./src/routes/styles/input.css -o ./src/routes/styles/output.css --minify",
+    "css:watch": "npx tailwindcss -i ./src/routes/styles/input.css -o ./src/routes/styles/output.css --watch"
   },
   "devDependencies": {
+    "@tailwindcss/cli": "^4.1.14",
     "@tauri-apps/cli": "^2",
     "daisyui": "^5.1.23",
     "tailwindcss": "^4.1.13"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.8.0",
+    "@tauri-apps/plugin-dialog": "^2.4.0",
     "@tauri-apps/plugin-fs": "^2.4.2"
   }
 }
