@@ -1,52 +1,83 @@
-# TODO-List
+# Jotly
 
-Progetto che punta sulla creazione di un'applicazione web per la gestione delle proprie note, suddividendole in diversi stati.
+A cross-platform desktop Kanban app for managing tasks and notes. Built with **Tauri** (Rust backend + JavaScript frontend), backed by **Supabase** for cloud sync and authentication.
 
-<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/61b79edd-45ae-40ab-9b33-cdc1a9e83429" />
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)
+![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=flat-square&logo=tauri&logoColor=white)
+![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat-square&logo=supabase&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 
+---
+
+## Features
+
+- **Kanban board** with 4 columns: Backlog → In Progress → Review → Done
+- **User authentication** via Supabase (JWT-based, persists across restarts)
+- **Offline-first**: notes load from `localStorage` instantly; Supabase syncs on login
+- **Search** notes by title or content
+- **Dark/light mode** switchable at runtime
+- **Multilingual** (Italian / English)
+- **Signed binary releases** for Windows (`.exe` and `.msi`)
 
 ---
 
-# Analisi dei requisiti
-Per poter svilippare al meglio il nostro progetto siamo partiti dall'analisi dei requisiti funazionali e non funzionali
+## Architecture
 
-## Requisiti Funzionali
-- ### Must Have
-  - Poter aggiungere delle note
-  - Assegnare a ciascuna nota uno stato (Backlog, In progress, Review e Done)
-  - Salvere le note nel localstorage
-- ### Should Have
-  - Poter eliminare le note
-  - Poter cambiare lo stato di una nota
-  - Poter cercare una nota in base al titolo o contenuto
-- ### Could Have
-  - Poter visualizzare tutte le note di un singolo stato
-  - Poter cambiare il tema dell'applicazione (chiaro/scuro)
-  - Un sistema di autenticazione
-  - Poter cambiare la lingua (Italiano/Inglese)
-- ### Won't Have
-  -  Poter condividere le note
-    
- 
-## Requisiti non Funzionali
-- ### Prestazioni
-  - L'applicazione dev'essere rapida nelle operazioni base (aggiunta, eliminazione e spostamento)
-- ### Scalabilità
-  - L'applicazione è facilmente implementabile su un sistema distribuito, in modo da poterlo scalare a livello nazionale ed internazionale
-- ### Sicurezza
-  - L'applicazione fa uso di sistemi di archiviazione locale per le note, ma queste informazioni si possono facilmente spostare in un database criptato per proteggere i dati dell'utente  
-- ### Affidabilità
-  - L'applicazione assicura sempre il salvataggio delle note quando l'utente le crea, in modo da non perdere informazioni importanti
-- ### Usabilità
-  - L'interfaccia grafica dell'applicazione è intuitiva e facile da usare
+```
+Frontend (JavaScript + HTML/CSS + Tailwind + DaisyUI)
+        ↕ invoke()
+Backend (Rust / Tauri)
+        ↕ HTTPS REST
+Supabase Cloud (PostgreSQL + Auth API + Row Level Security)
+```
+
+The Rust backend handles all Supabase communication — JWT tokens are stored on disk in Rust, never exposed to the JavaScript layer.
+
+**Row Level Security** is enforced at the database level: every query is filtered by the authenticated user's UUID, making it impossible to read or modify another user's notes.
 
 ---
-## IDE Setup consigliato
-- [VS Code](https://code.visualstudio.com/)
-- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode)
-- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
-## Strumenti Necessari
-- [Node.js](https://nodejs.org/en)
-- [Strumenti di sviluppo cpp](https://developer.microsoft.com/it-it/cpp)
-- [Rust](https://rust-lang.org/tools/install/)
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Tauri 2.0 |
+| Frontend | HTML, Tailwind CSS 4, DaisyUI 4, JavaScript (ES6+) |
+| Backend | Rust (`reqwest`, `serde`, `tokio`) |
+| Database | Supabase (PostgreSQL), Row Level Security |
+| Auth | Supabase Auth (JWT) |
+| i18n | Custom locale system (`it.json` / `en.json`) |
+
+---
+
+## Installation
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/)
+- [Rust](https://rustup.rs/)
+- C++ build tools ([Windows](https://developer.microsoft.com/cpp) / `build-essential` on Linux)
+
+### Run from source
+
+```bash
+cd TodoList
+npm install
+npm run tauri dev
+```
+
+### Pre-built releases
+
+Download from the [`releases/`](releases/) folder:
+- `Jotly_0.1.0_x64-setup.exe` — NSIS installer
+- `Jotly_0.1.0_x64_en-US.msi` — MSI package
+
+---
+
+## Project context
+
+School project at IIS B. Castelli, Brescia (January 2025).  
+The assignment was to build a full-stack desktop application with authentication, cloud sync, and a production-grade architecture — choosing Tauri over Electron for its smaller binary size (~3 MB vs ~80 MB) and Rust memory safety.
+
+**Team:** Simone Rossi, Marco Stellino, Massimo Tammaro Russo
